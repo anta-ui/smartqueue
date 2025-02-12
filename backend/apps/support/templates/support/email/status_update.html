@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .ticket-info {
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .status-new { background-color: #17a2b8; color: white; }
+        .status-assigned { background-color: #6c757d; color: white; }
+        .status-in-progress { background-color: #007bff; color: white; }
+        .status-pending { background-color: #ffc107; }
+        .status-resolved { background-color: #28a745; color: white; }
+        .status-closed { background-color: #6c757d; color: white; }
+        .footer {
+            font-size: 12px;
+            color: #6c757d;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Ticket Status Update</h2>
+            <p>The status of your support ticket has been updated.</p>
+        </div>
+
+        <div class="ticket-info">
+            <h3>Ticket Details</h3>
+            <p><strong>Reference Number:</strong> {{ ticket.reference_number }}</p>
+            <p><strong>Title:</strong> {{ ticket.title }}</p>
+            <p><strong>Previous Status:</strong> 
+                <span class="status status-{{ old_status|lower }}">
+                    {{ old_status }}
+                </span>
+            </p>
+            <p><strong>New Status:</strong> 
+                <span class="status status-{{ new_status|lower }}">
+                    {{ new_status }}
+                </span>
+            </p>
+            {% if ticket.resolution %}
+            <p><strong>Resolution:</strong></p>
+            <div style="background-color: #f8f9fa; padding: 10px; border-radius: 3px;">
+                {{ ticket.resolution|linebreaks }}
+            </div>
+            {% endif %}
+        </div>
+
+        <div style="text-align: center; margin: 20px 0;">
+            <a href="{{ support_url }}" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+                View Ticket
+            </a>
+        </div>
+
+        {% if ticket.status == 'RE' %}
+        <div style="background-color: #e9ecef; padding: 15px; border-radius: 5px; margin: 20px 0;">
+            <p><strong>Please Rate Our Support</strong></p>
+            <p>We'd appreciate your feedback on how we handled your ticket. Please take a moment to rate our support and provide any additional comments.</p>
+            <div style="text-align: center; margin: 10px 0;">
+                <a href="{{ feedback_url }}" style="background-color: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+                    Rate Our Support
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="footer">
+            <p>This is an automated message. Please do not reply directly to this email.</p>
+            <p>© {{ current_year }} {{ organization_name }}. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

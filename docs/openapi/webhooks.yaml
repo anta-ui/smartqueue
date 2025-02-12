@@ -1,0 +1,538 @@
+openapi: 3.0.3
+info:
+  title: SmartQueue Webhooks API
+  version: 1.0.0
+  description: Documentation des API webhooks de SmartQueue
+
+paths:
+  /api/organizations/{organizationId}/webhooks:
+    get:
+      operationId: webhooks_list
+      tags:
+        - webhooks
+      description: Liste tous les webhooks pour une organisation
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: string
+      security:
+        - jwtAuth: []
+      responses:
+        '200':
+          description: Liste des webhooks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WebhookEndpoint'
+    post:
+      operationId: webhooks_create
+      tags:
+        - webhooks
+      description: Crée un nouveau webhook pour une organisation
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookEndpointCreate'
+      security:
+        - jwtAuth: []
+      responses:
+        '201':
+          description: Webhook créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEndpoint'
+
+  /api/organizations/{organizationId}/webhooks/{webhookId}:
+    get:
+      operationId: webhooks_retrieve
+      tags:
+        - webhooks
+      description: Récupère les détails d'un webhook
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: webhookId
+          in: path
+          required: true
+          schema:
+            type: string
+      security:
+        - jwtAuth: []
+      responses:
+        '200':
+          description: Détails du webhook
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEndpoint'
+    put:
+      operationId: webhooks_update
+      tags:
+        - webhooks
+      description: Met à jour un webhook existant
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: webhookId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookEndpointUpdate'
+      security:
+        - jwtAuth: []
+      responses:
+        '200':
+          description: Webhook mis à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEndpoint'
+    delete:
+      operationId: webhooks_delete
+      tags:
+        - webhooks
+      description: Supprime un webhook
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: webhookId
+          in: path
+          required: true
+          schema:
+            type: string
+      security:
+        - jwtAuth: []
+      responses:
+        '204':
+          description: Webhook supprimé
+
+  /api/organizations/{organizationId}/webhooks/{webhookId}/deliveries:
+    get:
+      operationId: webhook_deliveries_list
+      tags:
+        - webhooks
+      description: Liste les livraisons d'un webhook
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: webhookId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, success, failure]
+        - name: event
+          in: query
+          schema:
+            type: string
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            default: 20
+      security:
+        - jwtAuth: []
+      responses:
+        '200':
+          description: Liste des livraisons
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/WebhookDelivery'
+                  pagination:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                      page:
+                        type: integer
+                      per_page:
+                        type: integer
+                      total_pages:
+                        type: integer
+
+  /api/organizations/{organizationId}/webhooks/{webhookId}/test:
+    post:
+      operationId: webhooks_test
+      tags:
+        - webhooks
+      description: Envoie une requête de test au webhook
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: webhookId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                event:
+                  type: string
+                  description: Type d'événement à simuler
+                payload:
+                  type: object
+                  description: Données à envoyer
+      security:
+        - jwtAuth: []
+      responses:
+        '200':
+          description: Résultat du test
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookDelivery'
+
+components:
+  schemas:
+    WebhookEndpoint:
+      type: object
+      description: Configuration d'un point de terminaison webhook
+      properties:
+        id:
+          type: string
+          description: Identifiant unique du webhook
+        organizationId:
+          type: string
+          description: Identifiant de l'organisation propriétaire
+        name:
+          type: string
+          description: Nom descriptif du webhook
+        url:
+          type: string
+          description: URL de destination des événements
+        description:
+          type: string
+          description: Description détaillée du webhook
+        events:
+          type: array
+          description: Liste des types d'événements à recevoir
+          items:
+            type: string
+            enum:
+              - user.created
+              - user.updated
+              - user.deleted
+              - user.login
+              - user.logout
+              - user.password_reset
+              - organization.created
+              - organization.updated
+              - organization.deleted
+              - billing.invoice.created
+              - billing.invoice.paid
+              - billing.invoice.overdue
+              - billing.subscription.created
+              - billing.subscription.updated
+              - billing.subscription.canceled
+              - api.key.created
+              - api.key.revoked
+              - api.rate_limit.exceeded
+              - api.error.repeated
+        active:
+          type: boolean
+          description: État d'activation du webhook
+        secret:
+          type: string
+          description: Clé secrète pour la signature des payloads
+        createdAt:
+          type: string
+          format: date-time
+          description: Date de création
+        createdBy:
+          type: object
+          description: Utilisateur ayant créé le webhook
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+        metadata:
+          type: object
+          description: Métadonnées de configuration
+          properties:
+            environment:
+              type: string
+              enum:
+                - development
+                - staging
+                - production
+            retryPolicy:
+              type: object
+              properties:
+                maxAttempts:
+                  type: integer
+                  minimum: 1
+                  maximum: 10
+                backoffRate:
+                  type: number
+                  minimum: 1
+                  maximum: 5
+            timeout:
+              type: integer
+              minimum: 1000
+              maximum: 30000
+            headers:
+              type: object
+              additionalProperties:
+                type: string
+        stats:
+          type: object
+          description: Statistiques de livraison
+          properties:
+            totalDeliveries:
+              type: integer
+            successfulDeliveries:
+              type: integer
+            failedDeliveries:
+              type: integer
+            averageLatency:
+              type: number
+            lastDelivery:
+              type: object
+              properties:
+                timestamp:
+                  type: string
+                  format: date-time
+                status:
+                  type: string
+                  enum:
+                    - success
+                    - failure
+                statusCode:
+                  type: integer
+                error:
+                  type: string
+      required:
+        - id
+        - organizationId
+        - name
+        - url
+        - events
+        - active
+        - secret
+        - createdAt
+        - createdBy
+        - stats
+
+    WebhookEndpointCreate:
+      type: object
+      description: Données pour la création d'un webhook
+      properties:
+        name:
+          type: string
+        url:
+          type: string
+        description:
+          type: string
+        events:
+          type: array
+          items:
+            type: string
+        metadata:
+          type: object
+          properties:
+            environment:
+              type: string
+            retryPolicy:
+              type: object
+              properties:
+                maxAttempts:
+                  type: integer
+                backoffRate:
+                  type: number
+            timeout:
+              type: integer
+            headers:
+              type: object
+              additionalProperties:
+                type: string
+      required:
+        - name
+        - url
+        - events
+
+    WebhookEndpointUpdate:
+      type: object
+      description: Données pour la mise à jour d'un webhook
+      properties:
+        name:
+          type: string
+        url:
+          type: string
+        description:
+          type: string
+        events:
+          type: array
+          items:
+            type: string
+        active:
+          type: boolean
+        metadata:
+          type: object
+          properties:
+            environment:
+              type: string
+            retryPolicy:
+              type: object
+              properties:
+                maxAttempts:
+                  type: integer
+                backoffRate:
+                  type: number
+            timeout:
+              type: integer
+            headers:
+              type: object
+              additionalProperties:
+                type: string
+
+    WebhookDelivery:
+      type: object
+      description: Détails d'une livraison de webhook
+      properties:
+        id:
+          type: string
+        endpointId:
+          type: string
+        event:
+          type: string
+        payload:
+          type: object
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+            - pending
+            - success
+            - failure
+        statusCode:
+          type: integer
+        error:
+          type: string
+        duration:
+          type: integer
+        attempts:
+          type: array
+          items:
+            type: object
+            properties:
+              timestamp:
+                type: string
+                format: date-time
+              status:
+                type: string
+                enum:
+                  - success
+                  - failure
+              statusCode:
+                type: integer
+              error:
+                type: string
+              duration:
+                type: integer
+        request:
+          type: object
+          properties:
+            url:
+              type: string
+            method:
+              type: string
+            headers:
+              type: object
+              additionalProperties:
+                type: string
+            body:
+              type: string
+        response:
+          type: object
+          properties:
+            statusCode:
+              type: integer
+            headers:
+              type: object
+              additionalProperties:
+                type: string
+            body:
+              type: string
+      required:
+        - id
+        - endpointId
+        - event
+        - payload
+        - timestamp
+        - status
+        - duration
+        - attempts
+        - request
+
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

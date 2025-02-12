@@ -1,0 +1,40 @@
+# Machine Learning de base
+scikit-learn==1.3.2
+numpy==1.26.3
+pandas==2.2.0
+joblib==1.3.2
+
+# Deep Learning
+tensorflow==2.15.0
+torch==2.1.2
+transformers==4.36.2
+
+# Séries temporelles
+prophet==1.1.5
+statsmodels==0.14.1
+
+# Traitement du langage naturel
+nltk==3.8.1
+spacy==3.7.2
+sentence-transformers==2.2.2
+
+# Optimisation
+scipy==1.12.0
+optuna==3.5.0
+
+# Visualisation (pour le debugging et l'analyse)
+matplotlib==3.8.2
+seaborn==0.13.1
+
+# MLOps
+mlflow==2.9.2
+great-expectations==0.18.9
+evidently==0.4.12
+
+# Explicabilité des modèles
+shap==0.44.0
+lime==0.2.0.1
+
+# Monitoring et logging
+wandb==0.16.2
+tensorboard==2.15.1

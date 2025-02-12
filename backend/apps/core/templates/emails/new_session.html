@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #4F46E5;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            background-color: #f9fafb;
+            padding: 20px;
+            border-radius: 0 0 5px 5px;
+            border: 1px solid #e5e7eb;
+        }
+        .alert {
+            background-color: #fef2f2;
+            border: 1px solid #fee2e2;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            background-color: #4F46E5;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        .details {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Nouvelle connexion détectée</h1>
+    </div>
+    <div class="content">
+        <p>Bonjour {{ user.get_full_name|default:user.email }},</p>
+        
+        <p>Nous avons détecté une nouvelle connexion à votre compte SmartQueue.</p>
+        
+        <div class="details">
+            <h3>Détails de la connexion :</h3>
+            <ul>
+                <li><strong>Date :</strong> {{ date }}</li>
+                <li><strong>Appareil :</strong> {{ session.device_name }}</li>
+                <li><strong>Localisation :</strong> {{ session.location|default:"Inconnue" }}</li>
+                <li><strong>Adresse IP :</strong> {{ session.ip_address }}</li>
+            </ul>
+        </div>
+        
+        <div class="alert">
+            <p><strong>Si vous ne reconnaissez pas cette activité :</strong></p>
+            <ol>
+                <li>Changez immédiatement votre mot de passe</li>
+                <li>Activez l'authentification à deux facteurs si ce n'est pas déjà fait</li>
+                <li>Contactez notre support</li>
+            </ol>
+        </div>
+        
+        <p style="text-align: center;">
+            <a href="{{ site_url }}/settings/security" class="button">Gérer mes sessions</a>
+        </p>
+    </div>
+    <div class="footer">
+        <p>Cet email a été envoyé par SmartQueue</p>
+        <p>© {{ year }} SmartQueue. Tous droits réservés.</p>
+    </div>
+</body>
+</html>

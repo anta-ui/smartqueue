@@ -1,0 +1,1 @@
+PYTHONPATH=/home/youssoupha/projects/backend DJANGO_SETTINGS_MODULE=smartqueue.test_settings DB_NAME=test_smartqueue DB_USER=youssoupha DB_PASSWORD=youssoupha python3 manage.py test apps.core.tests.test_auth apps.core.tests.test_consent apps.core.tests.test_integration -v 2 --keepdb

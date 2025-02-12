@@ -1,0 +1,7324 @@
+openapi: 3.0.3
+info:
+  title: SmartQueue API
+  version: 1.0.0
+  description: API for managing queues, tickets, and related services
+paths:
+  /api/analytics/agent-performance/:
+    get:
+      operationId: analytics_agent_performance_list
+      tags:
+      - analytics
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AgentPerformance'
+          description: ''
+    post:
+      operationId: analytics_agent_performance_create
+      tags:
+      - analytics
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentPerformance'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AgentPerformance'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AgentPerformance'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentPerformance'
+          description: ''
+  /api/analytics/agent-performance/{id}/:
+    get:
+      operationId: analytics_agent_performance_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - analytics
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentPerformance'
+          description: ''
+    put:
+      operationId: analytics_agent_performance_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - analytics
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentPerformance'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AgentPerformance'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AgentPerformance'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentPerformance'
+          description: ''
+    patch:
+      operationId: analytics_agent_performance_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - analytics
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAgentPerformance'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAgentPerformance'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAgentPerformance'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentPerformance'
+          description: ''
+    delete:
+      operationId: analytics_agent_performance_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - analytics
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/analytics/agent-performance/aggregate/:
+    post:
+      operationId: analytics_agent_performance_aggregate_create
+      tags:
+      - analytics
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentPerformance'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AgentPerformance'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AgentPerformance'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentPerformance'
+          description: ''
+  /api/analytics/agent-performance/ranking/:
+    get:
+      operationId: analytics_agent_performance_ranking_retrieve
+      tags:
+      - analytics
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentPerformance'
+          description: ''
+  /api/analytics/customer-feedback/:
+    get:
+      operationId: analytics_customer_feedback_list
+      tags:
+      - analytics
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomerFeedback'
+          description: ''
+    post:
+      operationId: analytics_customer_feedback_create
+      tags:
+      - analytics
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerFeedback'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CustomerFeedback'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CustomerFeedback'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerFeedback'
+          description: ''
+  /api/analytics/customer-feedback/{id}/:
+    get:
+      operationId: analytics_customer_feedback_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - analytics
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerFeedback'
+          description: ''
+    put:
+      operationId: analytics_customer_feedback_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - analytics
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerFeedback'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CustomerFeedback'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CustomerFeedback'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerFeedback'
+          description: ''
+    patch:
+      operationId: analytics_customer_feedback_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - analytics
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCustomerFeedback'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCustomerFeedback'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCustomerFeedback'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerFeedback'
+          description: ''
+    delete:
+      operationId: analytics_customer_feedback_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - analytics
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/analytics/customer-feedback/analyze/:
+    post:
+      operationId: analytics_customer_feedback_analyze_create
+      tags:
+      - analytics
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerFeedback'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CustomerFeedback'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CustomerFeedback'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerFeedback'
+          description: ''
+  /api/analytics/customer-feedback/summary/:
+    get:
+      operationId: analytics_customer_feedback_summary_retrieve
+      tags:
+      - analytics
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerFeedback'
+          description: ''
+  /api/analytics/queue-metrics/:
+    get:
+      operationId: analytics_queue_metrics_list
+      tags:
+      - analytics
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QueueMetrics'
+          description: ''
+    post:
+      operationId: analytics_queue_metrics_create
+      tags:
+      - analytics
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueueMetrics'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/QueueMetrics'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/QueueMetrics'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueMetrics'
+          description: ''
+  /api/analytics/queue-metrics/{id}/:
+    get:
+      operationId: analytics_queue_metrics_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - analytics
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueMetrics'
+          description: ''
+    put:
+      operationId: analytics_queue_metrics_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - analytics
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueueMetrics'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/QueueMetrics'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/QueueMetrics'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueMetrics'
+          description: ''
+    patch:
+      operationId: analytics_queue_metrics_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - analytics
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedQueueMetrics'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedQueueMetrics'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedQueueMetrics'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueMetrics'
+          description: ''
+    delete:
+      operationId: analytics_queue_metrics_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - analytics
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/analytics/queue-metrics/aggregate/:
+    post:
+      operationId: analytics_queue_metrics_aggregate_create
+      tags:
+      - analytics
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueueMetrics'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/QueueMetrics'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/QueueMetrics'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueMetrics'
+          description: ''
+  /api/analytics/queue-metrics/peak_hours_analysis/:
+    get:
+      operationId: analytics_queue_metrics_peak_hours_analysis_retrieve
+      tags:
+      - analytics
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueMetrics'
+          description: ''
+  /api/auth/biometric/register/:
+    post:
+      operationId: auth_biometric_register_create
+      tags:
+      - auth
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/auth/consent/:
+    post:
+      operationId: auth_consent_create
+      tags:
+      - auth
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+    delete:
+      operationId: auth_consent_destroy
+      tags:
+      - auth
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/auth/logout/:
+    post:
+      operationId: auth_logout_create
+      tags:
+      - auth
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/auth/mfa/totp/create/:
+    post:
+      operationId: auth_mfa_totp_create_create
+      tags:
+      - auth
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/auth/mfa/totp/verify/:
+    post:
+      operationId: auth_mfa_totp_verify_create
+      tags:
+      - auth
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/auth/register/:
+    post:
+      operationId: auth_register_create
+      tags:
+      - auth
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/auth/token/:
+    post:
+      operationId: auth_token_create
+      description: |-
+        Takes a set of user credentials and returns an access and refresh JSON web
+        token pair to prove the authentication of those credentials.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomTokenObtainPair'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CustomTokenObtainPair'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CustomTokenObtainPair'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomTokenObtainPair'
+          description: ''
+  /api/auth/token/refresh/:
+    post:
+      operationId: auth_token_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /api/billing/contacts/:
+    get:
+      operationId: billing_contacts_list
+      tags:
+      - billing
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BillingContact'
+          description: ''
+    post:
+      operationId: billing_contacts_create
+      tags:
+      - billing
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BillingContact'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BillingContact'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BillingContact'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillingContact'
+          description: ''
+  /api/billing/contacts/{id}/:
+    get:
+      operationId: billing_contacts_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - billing
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillingContact'
+          description: ''
+    put:
+      operationId: billing_contacts_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - billing
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BillingContact'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BillingContact'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BillingContact'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillingContact'
+          description: ''
+    patch:
+      operationId: billing_contacts_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - billing
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedBillingContact'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedBillingContact'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedBillingContact'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillingContact'
+          description: ''
+    delete:
+      operationId: billing_contacts_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - billing
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/billing/contacts/{id}/set_primary/:
+    post:
+      operationId: billing_contacts_set_primary_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - billing
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BillingContact'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BillingContact'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BillingContact'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillingContact'
+          description: ''
+  /api/billing/invoices/:
+    get:
+      operationId: billing_invoices_list
+      tags:
+      - billing
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Invoice'
+          description: ''
+  /api/billing/invoices/{id}/:
+    get:
+      operationId: billing_invoices_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - billing
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invoice'
+          description: ''
+  /api/billing/invoices/{id}/pay/:
+    post:
+      operationId: billing_invoices_pay_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - billing
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Invoice'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Invoice'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Invoice'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invoice'
+          description: ''
+  /api/billing/invoices/search/:
+    post:
+      operationId: billing_invoices_search_create
+      tags:
+      - billing
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Invoice'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Invoice'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Invoice'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invoice'
+          description: ''
+  /api/billing/payments/:
+    get:
+      operationId: billing_payments_list
+      tags:
+      - billing
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Payment'
+          description: ''
+  /api/billing/payments/{id}/:
+    get:
+      operationId: billing_payments_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - billing
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+          description: ''
+  /api/billing/plans/:
+    get:
+      operationId: billing_plans_list
+      tags:
+      - billing
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SubscriptionPlan'
+          description: ''
+  /api/billing/plans/{id}/:
+    get:
+      operationId: billing_plans_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this subscription plan.
+        required: true
+      tags:
+      - billing
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionPlan'
+          description: ''
+  /api/billing/plans/{id}/subscribe/:
+    post:
+      operationId: billing_plans_subscribe_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this subscription plan.
+        required: true
+      tags:
+      - billing
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionPlan'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SubscriptionPlan'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SubscriptionPlan'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionPlan'
+          description: ''
+  /api/billing/subscriptions/:
+    get:
+      operationId: billing_subscriptions_list
+      tags:
+      - billing
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Subscription'
+          description: ''
+    post:
+      operationId: billing_subscriptions_create
+      tags:
+      - billing
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Subscription'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Subscription'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Subscription'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+          description: ''
+  /api/billing/subscriptions/{id}/:
+    get:
+      operationId: billing_subscriptions_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - billing
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+          description: ''
+    put:
+      operationId: billing_subscriptions_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - billing
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Subscription'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Subscription'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Subscription'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+          description: ''
+    patch:
+      operationId: billing_subscriptions_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - billing
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedSubscription'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedSubscription'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedSubscription'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+          description: ''
+    delete:
+      operationId: billing_subscriptions_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - billing
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/billing/subscriptions/{id}/cancel/:
+    post:
+      operationId: billing_subscriptions_cancel_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - billing
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Subscription'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Subscription'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Subscription'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+          description: ''
+  /api/billing/subscriptions/{id}/change_plan/:
+    post:
+      operationId: billing_subscriptions_change_plan_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - billing
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Subscription'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Subscription'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Subscription'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+          description: ''
+  /api/geolocation/alerts/:
+    get:
+      operationId: geolocation_alerts_list
+      tags:
+      - geolocation
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProximityAlert'
+          description: ''
+    post:
+      operationId: geolocation_alerts_create
+      tags:
+      - geolocation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProximityAlert'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProximityAlert'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProximityAlert'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProximityAlert'
+          description: ''
+  /api/geolocation/alerts/{id}/:
+    get:
+      operationId: geolocation_alerts_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - geolocation
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProximityAlert'
+          description: ''
+    put:
+      operationId: geolocation_alerts_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - geolocation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProximityAlert'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProximityAlert'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProximityAlert'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProximityAlert'
+          description: ''
+    patch:
+      operationId: geolocation_alerts_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - geolocation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProximityAlert'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedProximityAlert'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedProximityAlert'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProximityAlert'
+          description: ''
+    delete:
+      operationId: geolocation_alerts_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - geolocation
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/geolocation/alerts/{id}/resolve/:
+    post:
+      operationId: geolocation_alerts_resolve_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - geolocation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProximityAlert'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProximityAlert'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProximityAlert'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProximityAlert'
+          description: ''
+  /api/geolocation/events/:
+    get:
+      operationId: geolocation_events_list
+      tags:
+      - geolocation
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GeofencingEvent'
+          description: ''
+  /api/geolocation/events/{id}/:
+    get:
+      operationId: geolocation_events_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - geolocation
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeofencingEvent'
+          description: ''
+  /api/geolocation/locations/:
+    get:
+      operationId: geolocation_locations_list
+      tags:
+      - geolocation
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserLocation'
+          description: ''
+    post:
+      operationId: geolocation_locations_create
+      tags:
+      - geolocation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLocation'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserLocation'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserLocation'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLocation'
+          description: ''
+  /api/geolocation/locations/{id}/:
+    get:
+      operationId: geolocation_locations_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - geolocation
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLocation'
+          description: ''
+  /api/geolocation/services/:
+    get:
+      operationId: geolocation_services_list
+      tags:
+      - geolocation
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LocationBasedService'
+          description: ''
+    post:
+      operationId: geolocation_services_create
+      tags:
+      - geolocation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationBasedService'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LocationBasedService'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LocationBasedService'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocationBasedService'
+          description: ''
+  /api/geolocation/services/{id}/:
+    get:
+      operationId: geolocation_services_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - geolocation
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocationBasedService'
+          description: ''
+    put:
+      operationId: geolocation_services_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - geolocation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationBasedService'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LocationBasedService'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LocationBasedService'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocationBasedService'
+          description: ''
+    patch:
+      operationId: geolocation_services_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - geolocation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedLocationBasedService'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedLocationBasedService'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedLocationBasedService'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocationBasedService'
+          description: ''
+    delete:
+      operationId: geolocation_services_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - geolocation
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/geolocation/services/{id}/update_load/:
+    post:
+      operationId: geolocation_services_update_load_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - geolocation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationBasedService'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LocationBasedService'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LocationBasedService'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocationBasedService'
+          description: ''
+  /api/geolocation/zones/:
+    get:
+      operationId: geolocation_zones_list
+      tags:
+      - geolocation
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GeofencingZone'
+          description: ''
+    post:
+      operationId: geolocation_zones_create
+      tags:
+      - geolocation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GeofencingZone'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GeofencingZone'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GeofencingZone'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeofencingZone'
+          description: ''
+  /api/geolocation/zones/{id}/:
+    get:
+      operationId: geolocation_zones_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - geolocation
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeofencingZone'
+          description: ''
+    put:
+      operationId: geolocation_zones_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - geolocation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GeofencingZone'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GeofencingZone'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GeofencingZone'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeofencingZone'
+          description: ''
+    patch:
+      operationId: geolocation_zones_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - geolocation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedGeofencingZone'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedGeofencingZone'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedGeofencingZone'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeofencingZone'
+          description: ''
+    delete:
+      operationId: geolocation_zones_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - geolocation
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/notifications/batches/:
+    get:
+      operationId: notifications_batches_list
+      tags:
+      - notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NotificationBatch'
+          description: ''
+    post:
+      operationId: notifications_batches_create
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationBatch'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NotificationBatch'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NotificationBatch'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationBatch'
+          description: ''
+  /api/notifications/batches/{id}/:
+    get:
+      operationId: notifications_batches_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationBatch'
+          description: ''
+    put:
+      operationId: notifications_batches_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationBatch'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NotificationBatch'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NotificationBatch'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationBatch'
+          description: ''
+    patch:
+      operationId: notifications_batches_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedNotificationBatch'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedNotificationBatch'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedNotificationBatch'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationBatch'
+          description: ''
+    delete:
+      operationId: notifications_batches_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/notifications/batches/{id}/process/:
+    post:
+      operationId: notifications_batches_process_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationBatch'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NotificationBatch'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NotificationBatch'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationBatch'
+          description: ''
+  /api/notifications/channels/:
+    get:
+      operationId: notifications_channels_list
+      tags:
+      - notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NotificationChannel'
+          description: ''
+    post:
+      operationId: notifications_channels_create
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationChannel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NotificationChannel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NotificationChannel'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationChannel'
+          description: ''
+  /api/notifications/channels/{id}/:
+    get:
+      operationId: notifications_channels_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationChannel'
+          description: ''
+    put:
+      operationId: notifications_channels_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationChannel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NotificationChannel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NotificationChannel'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationChannel'
+          description: ''
+    patch:
+      operationId: notifications_channels_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedNotificationChannel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedNotificationChannel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedNotificationChannel'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationChannel'
+          description: ''
+    delete:
+      operationId: notifications_channels_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/notifications/channels/{id}/test/:
+    post:
+      operationId: notifications_channels_test_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationChannel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NotificationChannel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NotificationChannel'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationChannel'
+          description: ''
+  /api/notifications/notifications/:
+    get:
+      operationId: notifications_notifications_list
+      tags:
+      - notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Notification'
+          description: ''
+    post:
+      operationId: notifications_notifications_create
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Notification'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/notifications/notifications/{id}/:
+    get:
+      operationId: notifications_notifications_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+    put:
+      operationId: notifications_notifications_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Notification'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+    patch:
+      operationId: notifications_notifications_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedNotification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedNotification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedNotification'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+    delete:
+      operationId: notifications_notifications_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/notifications/notifications/{id}/mark_as_read/:
+    post:
+      operationId: notifications_notifications_mark_as_read_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Notification'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/notifications/notifications/mark_all_as_read/:
+    post:
+      operationId: notifications_notifications_mark_all_as_read_create
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Notification'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/notifications/preferences/:
+    get:
+      operationId: notifications_preferences_list
+      tags:
+      - notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NotificationPreference'
+          description: ''
+    post:
+      operationId: notifications_preferences_create
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationPreference'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NotificationPreference'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NotificationPreference'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationPreference'
+          description: ''
+  /api/notifications/preferences/{id}/:
+    get:
+      operationId: notifications_preferences_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationPreference'
+          description: ''
+    put:
+      operationId: notifications_preferences_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationPreference'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NotificationPreference'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NotificationPreference'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationPreference'
+          description: ''
+    patch:
+      operationId: notifications_preferences_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedNotificationPreference'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedNotificationPreference'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedNotificationPreference'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationPreference'
+          description: ''
+    delete:
+      operationId: notifications_preferences_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/notifications/preferences/bulk_update/:
+    put:
+      operationId: notifications_preferences_bulk_update_update
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationPreference'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NotificationPreference'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NotificationPreference'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationPreference'
+          description: ''
+  /api/notifications/templates/:
+    get:
+      operationId: notifications_templates_list
+      tags:
+      - notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NotificationTemplate'
+          description: ''
+    post:
+      operationId: notifications_templates_create
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationTemplate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NotificationTemplate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NotificationTemplate'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationTemplate'
+          description: ''
+  /api/notifications/templates/{id}/:
+    get:
+      operationId: notifications_templates_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationTemplate'
+          description: ''
+    put:
+      operationId: notifications_templates_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationTemplate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NotificationTemplate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NotificationTemplate'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationTemplate'
+          description: ''
+    patch:
+      operationId: notifications_templates_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedNotificationTemplate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedNotificationTemplate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedNotificationTemplate'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationTemplate'
+          description: ''
+    delete:
+      operationId: notifications_templates_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/notifications/templates/{id}/preview/:
+    post:
+      operationId: notifications_templates_preview_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationTemplate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NotificationTemplate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NotificationTemplate'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationTemplate'
+          description: ''
+  /api/queues/analytics/:
+    get:
+      operationId: queues_analytics_list
+      tags:
+      - queues
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QueueAnalytics'
+          description: ''
+  /api/queues/analytics/{id}/:
+    get:
+      operationId: queues_analytics_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - queues
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueAnalytics'
+          description: ''
+  /api/queues/notifications/:
+    get:
+      operationId: queues_notifications_list
+      tags:
+      - queues
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QueueNotification'
+          description: ''
+  /api/queues/notifications/{id}/:
+    get:
+      operationId: queues_notifications_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - queues
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueNotification'
+          description: ''
+  /api/queues/queue-types/:
+    get:
+      operationId: queues_queue_types_list
+      tags:
+      - queues
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QueueType'
+          description: ''
+    post:
+      operationId: queues_queue_types_create
+      tags:
+      - queues
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueueType'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/QueueType'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/QueueType'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueType'
+          description: ''
+  /api/queues/queue-types/{id}/:
+    get:
+      operationId: queues_queue_types_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - queues
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueType'
+          description: ''
+    put:
+      operationId: queues_queue_types_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - queues
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueueType'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/QueueType'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/QueueType'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueType'
+          description: ''
+    patch:
+      operationId: queues_queue_types_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - queues
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedQueueType'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedQueueType'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedQueueType'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueType'
+          description: ''
+    delete:
+      operationId: queues_queue_types_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - queues
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/queues/queues/:
+    get:
+      operationId: queues_queues_list
+      tags:
+      - queues
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Queue'
+          description: ''
+    post:
+      operationId: queues_queues_create
+      tags:
+      - queues
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Queue'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Queue'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Queue'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Queue'
+          description: ''
+  /api/queues/queues/{id}/:
+    get:
+      operationId: queues_queues_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - queues
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Queue'
+          description: ''
+    put:
+      operationId: queues_queues_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - queues
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Queue'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Queue'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Queue'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Queue'
+          description: ''
+    patch:
+      operationId: queues_queues_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - queues
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedQueue'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedQueue'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedQueue'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Queue'
+          description: ''
+    delete:
+      operationId: queues_queues_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - queues
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/queues/queues/{id}/update_status/:
+    post:
+      operationId: queues_queues_update_status_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - queues
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Queue'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Queue'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Queue'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Queue'
+          description: ''
+  /api/queues/service-points/:
+    get:
+      operationId: queues_service_points_list
+      tags:
+      - queues
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ServicePoint'
+          description: ''
+    post:
+      operationId: queues_service_points_create
+      tags:
+      - queues
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServicePoint'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ServicePoint'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ServicePoint'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServicePoint'
+          description: ''
+  /api/queues/service-points/{id}/:
+    get:
+      operationId: queues_service_points_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - queues
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServicePoint'
+          description: ''
+    put:
+      operationId: queues_service_points_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - queues
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServicePoint'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ServicePoint'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ServicePoint'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServicePoint'
+          description: ''
+    patch:
+      operationId: queues_service_points_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - queues
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedServicePoint'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedServicePoint'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedServicePoint'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServicePoint'
+          description: ''
+    delete:
+      operationId: queues_service_points_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - queues
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/queues/service-points/{id}/call_next/:
+    post:
+      operationId: queues_service_points_call_next_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - queues
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServicePoint'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ServicePoint'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ServicePoint'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServicePoint'
+          description: ''
+  /api/queues/service-points/{id}/update_status/:
+    post:
+      operationId: queues_service_points_update_status_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - queues
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServicePoint'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ServicePoint'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ServicePoint'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServicePoint'
+          description: ''
+  /api/queues/tickets/:
+    get:
+      operationId: queues_tickets_list
+      tags:
+      - queues
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ticket'
+          description: ''
+    post:
+      operationId: queues_tickets_create
+      tags:
+      - queues
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+          description: ''
+  /api/queues/tickets/{id}/:
+    get:
+      operationId: queues_tickets_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - queues
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+          description: ''
+    put:
+      operationId: queues_tickets_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - queues
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+          description: ''
+    patch:
+      operationId: queues_tickets_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - queues
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedTicket'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedTicket'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedTicket'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+          description: ''
+    delete:
+      operationId: queues_tickets_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - queues
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/queues/tickets/{id}/update_status/:
+    post:
+      operationId: queues_tickets_update_status_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - queues
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+          description: ''
+  /api/queues/vehicle-categories/:
+    get:
+      operationId: queues_vehicle_categories_list
+      tags:
+      - queues
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VehicleCategory'
+          description: ''
+    post:
+      operationId: queues_vehicle_categories_create
+      tags:
+      - queues
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VehicleCategory'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VehicleCategory'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VehicleCategory'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VehicleCategory'
+          description: ''
+  /api/queues/vehicle-categories/{id}/:
+    get:
+      operationId: queues_vehicle_categories_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this vehicle category.
+        required: true
+      tags:
+      - queues
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VehicleCategory'
+          description: ''
+    put:
+      operationId: queues_vehicle_categories_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this vehicle category.
+        required: true
+      tags:
+      - queues
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VehicleCategory'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VehicleCategory'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VehicleCategory'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VehicleCategory'
+          description: ''
+    patch:
+      operationId: queues_vehicle_categories_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this vehicle category.
+        required: true
+      tags:
+      - queues
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedVehicleCategory'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedVehicleCategory'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedVehicleCategory'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VehicleCategory'
+          description: ''
+    delete:
+      operationId: queues_vehicle_categories_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this vehicle category.
+        required: true
+      tags:
+      - queues
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/schema/:
+    get:
+      operationId: schema_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - yaml
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - ar
+          - en
+          - fr
+      tags:
+      - schema
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/yaml:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/support/articles/:
+    get:
+      operationId: support_articles_list
+      description: Returns a list of knowledge base articles for the current organization.
+      summary: List knowledge base articles
+      tags:
+      - knowledge-base
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KnowledgeBase'
+          description: ''
+    post:
+      operationId: support_articles_create
+      description: Creates a new knowledge base article.
+      summary: Create knowledge base article
+      tags:
+      - knowledge-base
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KnowledgeBase'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/KnowledgeBase'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/KnowledgeBase'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KnowledgeBase'
+          description: ''
+  /api/support/articles/{slug}/:
+    get:
+      operationId: support_articles_retrieve
+      description: Returns the details of a specific knowledge base article.
+      summary: Get knowledge base article
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - knowledge-base
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KnowledgeBase'
+          description: ''
+    put:
+      operationId: support_articles_update
+      description: Updates all fields of an existing knowledge base article.
+      summary: Update knowledge base article
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - knowledge-base
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KnowledgeBase'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/KnowledgeBase'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/KnowledgeBase'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KnowledgeBase'
+          description: ''
+    patch:
+      operationId: support_articles_partial_update
+      description: Updates specific fields of an existing knowledge base article.
+      summary: Partially update knowledge base article
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - knowledge-base
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedKnowledgeBase'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedKnowledgeBase'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedKnowledgeBase'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KnowledgeBase'
+          description: ''
+    delete:
+      operationId: support_articles_destroy
+      description: Deletes a knowledge base article.
+      summary: Delete knowledge base article
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - knowledge-base
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/support/articles/{slug}/feedback/:
+    post:
+      operationId: support_articles_feedback_create
+      description: Submits feedback about whether an article was helpful.
+      summary: Submit article feedback
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - knowledge-base
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KnowledgeBaseFeedback'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/KnowledgeBaseFeedback'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/KnowledgeBaseFeedback'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KnowledgeBase'
+          description: ''
+  /api/support/articles/{slug}/view/:
+    post:
+      operationId: support_articles_view_create
+      description: Increments the view count for a knowledge base article.
+      summary: Record article view
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - knowledge-base
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KnowledgeBase'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/KnowledgeBase'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/KnowledgeBase'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KnowledgeBase'
+          description: ''
+  /api/support/faqs/:
+    get:
+      operationId: support_faqs_list
+      description: Returns a list of FAQs for the current organization.
+      summary: List FAQs
+      tags:
+      - faq
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FAQ'
+          description: ''
+    post:
+      operationId: support_faqs_create
+      description: Creates a new FAQ entry.
+      summary: Create FAQ
+      tags:
+      - faq
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FAQ'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FAQ'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FAQ'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FAQ'
+          description: ''
+  /api/support/faqs/{id}/:
+    get:
+      operationId: support_faqs_retrieve
+      description: Returns the details of a specific FAQ entry.
+      summary: Get FAQ
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this FAQ.
+        required: true
+      tags:
+      - faq
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FAQ'
+          description: ''
+    put:
+      operationId: support_faqs_update
+      description: Updates all fields of an existing FAQ entry.
+      summary: Update FAQ
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this FAQ.
+        required: true
+      tags:
+      - faq
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FAQ'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FAQ'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FAQ'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FAQ'
+          description: ''
+    patch:
+      operationId: support_faqs_partial_update
+      description: Updates specific fields of an existing FAQ entry.
+      summary: Partially update FAQ
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this FAQ.
+        required: true
+      tags:
+      - faq
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedFAQ'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedFAQ'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedFAQ'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FAQ'
+          description: ''
+    delete:
+      operationId: support_faqs_destroy
+      description: Deletes an FAQ entry.
+      summary: Delete FAQ
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this FAQ.
+        required: true
+      tags:
+      - faq
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/support/faqs/{id}/feedback/:
+    post:
+      operationId: support_faqs_feedback_create
+      description: Submits feedback about whether an FAQ was helpful.
+      summary: Submit FAQ feedback
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this FAQ.
+        required: true
+      tags:
+      - faq
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FAQFeedback'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FAQFeedback'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FAQFeedback'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FAQ'
+          description: ''
+  /api/support/faqs/{id}/view/:
+    post:
+      operationId: support_faqs_view_create
+      description: Increments the view count for an FAQ entry.
+      summary: Record FAQ view
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this FAQ.
+        required: true
+      tags:
+      - faq
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FAQ'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FAQ'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FAQ'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FAQ'
+          description: ''
+  /api/support/search/:
+    post:
+      operationId: support_search_create
+      description: Searches across tickets, FAQs, and knowledge base articles with
+        various filters.
+      summary: Search support resources
+      tags:
+      - search
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SupportSearch'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SupportSearch'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SupportSearch'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/support/tickets/:
+    get:
+      operationId: support_tickets_list
+      description: Returns a list of support tickets for the current organization.
+      summary: List support tickets
+      tags:
+      - support
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SupportTicket'
+          description: ''
+    post:
+      operationId: support_tickets_create
+      description: Creates a new support ticket and initial message.
+      summary: Create support ticket
+      tags:
+      - support
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SupportTicket'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SupportTicket'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SupportTicket'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupportTicket'
+          description: ''
+  /api/support/tickets/{id}/:
+    get:
+      operationId: support_tickets_retrieve
+      description: Returns the details of a specific support ticket.
+      summary: Get support ticket
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this support ticket.
+        required: true
+      tags:
+      - support
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupportTicket'
+          description: ''
+    put:
+      operationId: support_tickets_update
+      description: Updates all fields of an existing support ticket.
+      summary: Update support ticket
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this support ticket.
+        required: true
+      tags:
+      - support
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SupportTicket'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SupportTicket'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SupportTicket'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupportTicket'
+          description: ''
+    patch:
+      operationId: support_tickets_partial_update
+      description: Updates specific fields of an existing support ticket.
+      summary: Partially update support ticket
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this support ticket.
+        required: true
+      tags:
+      - support
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedSupportTicket'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedSupportTicket'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedSupportTicket'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupportTicket'
+          description: ''
+    delete:
+      operationId: support_tickets_destroy
+      description: Deletes a support ticket and all associated messages.
+      summary: Delete support ticket
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this support ticket.
+        required: true
+      tags:
+      - support
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/support/tickets/{id}/assign/:
+    post:
+      operationId: support_tickets_assign_create
+      description: Assigns the ticket to a staff member and optionally adds an internal
+        note.
+      summary: Assign ticket
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this support ticket.
+        required: true
+      tags:
+      - support
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TicketAssign'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TicketAssign'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TicketAssign'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupportTicket'
+          description: ''
+  /api/support/tickets/{id}/change_status/:
+    post:
+      operationId: support_tickets_change_status_create
+      description: Changes the ticket status and optionally adds an internal note.
+      summary: Update ticket status
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this support ticket.
+        required: true
+      tags:
+      - support
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TicketStatusUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TicketStatusUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TicketStatusUpdate'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupportTicket'
+          description: ''
+  /api/support/tickets/{id}/reply/:
+    post:
+      operationId: support_tickets_reply_create
+      description: Adds a new message to the ticket and updates its status.
+      summary: Reply to ticket
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this support ticket.
+        required: true
+      tags:
+      - support
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TicketReply'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TicketReply'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TicketReply'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketMessage'
+          description: ''
+components:
+  schemas:
+    AgentPerformance:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        agent_name:
+          type: string
+          readOnly: true
+        agent_email:
+          type: string
+          format: email
+          readOnly: true
+        date:
+          type: string
+          format: date
+        customers_served:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        average_service_time:
+          type: string
+        service_rating:
+          type: number
+          format: double
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        agent:
+          type: integer
+      required:
+      - agent
+      - agent_email
+      - agent_name
+      - average_service_time
+      - created_at
+      - customers_served
+      - date
+      - id
+    AlertTypeEnum:
+      enum:
+      - QU
+      - PA
+      - SE
+      - CU
+      type: string
+      description: |-
+        * `QU` - Queue Alert
+        * `PA` - Parking Alert
+        * `SE` - Service Alert
+        * `CU` - Custom Alert
+    BillingContact:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        phone:
+          type: string
+          maxLength: 20
+        is_primary:
+          type: boolean
+        address:
+          type: string
+        tax_id:
+          type: string
+          maxLength: 50
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        organization:
+          type: integer
+          readOnly: true
+      required:
+      - address
+      - created_at
+      - email
+      - id
+      - name
+      - organization
+      - phone
+      - updated_at
+    Category27aEnum:
+      enum:
+      - GU
+      - TU
+      - TR
+      - BP
+      - RN
+      - AP
+      type: string
+      description: |-
+        * `GU` - User Guide
+        * `TU` - Tutorial
+        * `TR` - Troubleshooting
+        * `BP` - Best Practices
+        * `RN` - Release Notes
+        * `AP` - API Documentation
+    Category329Enum:
+      enum:
+      - TE
+      - BI
+      - AC
+      - FE
+      - BU
+      - OT
+      type: string
+      description: |-
+        * `TE` - Technical
+        * `BI` - Billing
+        * `AC` - Account
+        * `FE` - Feature Request
+        * `BU` - Bug Report
+        * `OT` - Other
+    CategoryD6eEnum:
+      enum:
+      - GE
+      - TE
+      - BI
+      - AC
+      - FE
+      - SE
+      type: string
+      description: |-
+        * `GE` - General
+        * `TE` - Technical
+        * `BI` - Billing
+        * `AC` - Account
+        * `FE` - Features
+        * `SE` - Security
+    ChannelTypeEnum:
+      enum:
+      - EM
+      - SM
+      - PU
+      - WA
+      - IA
+      type: string
+      description: |-
+        * `EM` - Courriel
+        * `SM` - SMS
+        * `PU` - Push
+        * `WA` - WhatsApp
+        * `IA` - In-App
+    ConnectionTypeEnum:
+      enum:
+      - wifi
+      - cellular
+      - none
+      type: string
+      description: |-
+        * `wifi` - WiFi
+        * `cellular` - Cellular
+        * `none` - No Connection
+    CustomTokenObtainPair:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+      required:
+      - password
+      - username
+    CustomerFeedback:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        ticket_number:
+          type: string
+          readOnly: true
+        average_rating:
+          type: string
+          readOnly: true
+        rating:
+          allOf:
+          - $ref: '#/components/schemas/ServiceSatisfactionEnum'
+          minimum: -2147483648
+          maximum: 2147483647
+        comment:
+          type: string
+        wait_time_satisfaction:
+          allOf:
+          - $ref: '#/components/schemas/ServiceSatisfactionEnum'
+          minimum: -2147483648
+          maximum: 2147483647
+        service_satisfaction:
+          allOf:
+          - $ref: '#/components/schemas/ServiceSatisfactionEnum'
+          minimum: -2147483648
+          maximum: 2147483647
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        ticket:
+          type: integer
+      required:
+      - average_rating
+      - created_at
+      - id
+      - rating
+      - service_satisfaction
+      - ticket
+      - ticket_number
+      - wait_time_satisfaction
+    EventTypeEnum:
+      enum:
+      - EN
+      - EX
+      - DW
+      type: string
+      description: |-
+        * `EN` - Enter
+        * `EX` - Exit
+        * `DW` - Dwell
+    FAQ:
+      type: object
+      description: Serializer for FAQs.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        question:
+          type: string
+          maxLength: 500
+        answer:
+          type: string
+        category:
+          $ref: '#/components/schemas/CategoryD6eEnum'
+        tags:
+          type: array
+          items:
+            type: string
+            maxLength: 50
+        is_published:
+          type: boolean
+        helpful_count:
+          type: integer
+          readOnly: true
+        not_helpful_count:
+          type: integer
+          readOnly: true
+        view_count:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - answer
+      - created_at
+      - helpful_count
+      - id
+      - not_helpful_count
+      - question
+      - updated_at
+      - view_count
+    FAQFeedback:
+      type: object
+      description: Serializer for FAQ feedback.
+      properties:
+        is_helpful:
+          type: boolean
+          description: Whether the FAQ was helpful
+        comment:
+          type: string
+          description: Optional feedback comment
+      required:
+      - is_helpful
+    FaqCategoryEnum:
+      enum:
+      - GE
+      - TE
+      - BI
+      - AC
+      - FE
+      - SE
+      type: string
+      description: |-
+        * `GE` - General
+        * `TE` - Technical
+        * `BI` - Billing
+        * `AC` - Account
+        * `FE` - Features
+        * `SE` - Security
+    GeofencingEvent:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        zone_name:
+          type: string
+          readOnly: true
+        coordinates:
+          type: string
+          readOnly: true
+        event_type:
+          $ref: '#/components/schemas/EventTypeEnum'
+        location:
+          type: string
+          readOnly: true
+        timestamp:
+          type: string
+          format: date-time
+          readOnly: true
+        dwell_time:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+          description: Time spent in zone in seconds
+        user:
+          type: integer
+          readOnly: true
+        zone:
+          type: integer
+          readOnly: true
+      required:
+      - coordinates
+      - event_type
+      - id
+      - location
+      - timestamp
+      - user
+      - zone
+      - zone_name
+    GeofencingZone:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        coordinates:
+          type: array
+          items:
+            type: array
+            items:
+              type: array
+              items:
+                type: number
+                format: double
+          writeOnly: true
+        bounds:
+          type: string
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        zone_type:
+          $ref: '#/components/schemas/ZoneTypeEnum'
+        polygon:
+          type: string
+          description: Zone boundaries
+        radius:
+          type: number
+          format: double
+          description: Buffer radius in meters
+        is_active:
+          type: boolean
+        notification_enabled:
+          type: boolean
+        dwell_time:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          description: Minimum time in seconds to trigger dwell event
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        organization:
+          type: integer
+          readOnly: true
+      required:
+      - bounds
+      - coordinates
+      - created_at
+      - id
+      - name
+      - organization
+      - polygon
+      - updated_at
+      - zone_type
+    Invoice:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        subscription_plan:
+          type: string
+          readOnly: true
+        organization_name:
+          type: string
+          readOnly: true
+        invoice_number:
+          type: string
+          maxLength: 50
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        tax_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        total_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        status:
+          $ref: '#/components/schemas/InvoiceStatusEnum'
+        due_date:
+          type: string
+          format: date
+        paid_date:
+          type: string
+          format: date-time
+          nullable: true
+        notes:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        subscription:
+          type: integer
+          readOnly: true
+      required:
+      - amount
+      - created_at
+      - due_date
+      - id
+      - invoice_number
+      - organization_name
+      - subscription
+      - subscription_plan
+      - tax_amount
+      - total_amount
+      - updated_at
+    InvoiceStatusEnum:
+      enum:
+      - DR
+      - PE
+      - PA
+      - CA
+      - RE
+      type: string
+      description: |-
+        * `DR` - Draft
+        * `PE` - Pending
+        * `PA` - Paid
+        * `CA` - Cancelled
+        * `RE` - Refunded
+    KbCategoryEnum:
+      enum:
+      - GU
+      - TU
+      - TR
+      - BP
+      - RN
+      - AP
+      type: string
+      description: |-
+        * `GU` - User Guide
+        * `TU` - Tutorial
+        * `TR` - Troubleshooting
+        * `BP` - Best Practices
+        * `RN` - Release Notes
+        * `AP` - API Documentation
+    KnowledgeBase:
+      type: object
+      description: Serializer for knowledge base articles.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        title:
+          type: string
+          maxLength: 200
+        content:
+          type: string
+        category:
+          $ref: '#/components/schemas/Category27aEnum'
+        tags:
+          type: array
+          items:
+            type: string
+            maxLength: 50
+        is_published:
+          type: boolean
+        helpful_count:
+          type: integer
+          readOnly: true
+        not_helpful_count:
+          type: integer
+          readOnly: true
+        view_count:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - category
+      - content
+      - created_at
+      - helpful_count
+      - id
+      - not_helpful_count
+      - slug
+      - title
+      - updated_at
+      - view_count
+    KnowledgeBaseFeedback:
+      type: object
+      description: Serializer for knowledge base article feedback.
+      properties:
+        is_helpful:
+          type: boolean
+          description: Whether the article was helpful
+        comment:
+          type: string
+          description: Optional feedback comment
+      required:
+      - is_helpful
+    LocationBasedService:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        coordinates:
+          type: string
+          readOnly: true
+        distance:
+          type: string
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        service_type:
+          $ref: '#/components/schemas/ServiceTypeEnum'
+        location:
+          type: string
+        radius:
+          type: number
+          format: double
+          description: Service coverage radius in meters
+        is_active:
+          type: boolean
+        operating_hours:
+          description: Operating hours by day of week
+        capacity:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+          description: Maximum number of users that can be served
+        current_load:
+          type: integer
+          readOnly: true
+          description: Current number of users being served
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        organization:
+          type: integer
+          readOnly: true
+      required:
+      - coordinates
+      - created_at
+      - current_load
+      - distance
+      - id
+      - location
+      - name
+      - organization
+      - radius
+      - service_type
+      - updated_at
+    Notification:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        content_type:
+          type: string
+          title: Nom de la classe python du modèle
+        recipient_email:
+          type: string
+          format: email
+          writeOnly: true
+        template_name:
+          type: string
+          writeOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/Status45fEnum'
+          readOnly: true
+        priority:
+          $ref: '#/components/schemas/NotificationPriorityEnum'
+        subject:
+          type: string
+          maxLength: 255
+        content:
+          type: string
+        data:
+          description: Additional data for the notification
+        object_id:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+        scheduled_for:
+          type: string
+          format: date-time
+          nullable: true
+        sent_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        delivered_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        read_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        error_message:
+          type: string
+          readOnly: true
+        retry_count:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        template:
+          type: integer
+        channel:
+          type: integer
+        recipient:
+          type: integer
+      required:
+      - channel
+      - content
+      - created_at
+      - delivered_at
+      - error_message
+      - id
+      - read_at
+      - recipient
+      - sent_at
+      - status
+      - template
+      - updated_at
+    NotificationBatch:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        recipients_filter:
+          description: Filter criteria for recipients
+        data:
+          description: Data for notification content
+        scheduled_for:
+          type: string
+          format: date-time
+          nullable: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/Status45fEnum'
+          readOnly: true
+        total_count:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        sent_count:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        failed_count:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        template:
+          type: integer
+        channel:
+          type: integer
+      required:
+      - channel
+      - created_at
+      - failed_count
+      - id
+      - name
+      - recipients_filter
+      - status
+      - template
+      - updated_at
+    NotificationChannel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        channel_type:
+          $ref: '#/components/schemas/ChannelTypeEnum'
+        configuration:
+          description: Channel specific configuration
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        organization:
+          type: integer
+          readOnly: true
+      required:
+      - channel_type
+      - configuration
+      - created_at
+      - id
+      - name
+      - organization
+      - updated_at
+    NotificationPreference:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        channel_type:
+          $ref: '#/components/schemas/ChannelTypeEnum'
+        is_enabled:
+          type: boolean
+        quiet_hours_start:
+          type: string
+          format: time
+          nullable: true
+        quiet_hours_end:
+          type: string
+          format: time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        user:
+          type: integer
+          readOnly: true
+      required:
+      - channel_type
+      - created_at
+      - id
+      - updated_at
+      - user
+    NotificationPriorityEnum:
+      enum:
+      - LO
+      - 'NO'
+      - HI
+      - UR
+      type: string
+      description: |-
+        * `LO` - Low
+        * `NO` - Normal
+        * `HI` - High
+        * `UR` - Urgent
+    NotificationTemplate:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        template_type:
+          $ref: '#/components/schemas/TemplateTypeEnum'
+        subject:
+          type: string
+          description: Subject for email notifications
+          maxLength: 255
+        content:
+          type: string
+          description: Template content with placeholders
+        html_content:
+          type: string
+          description: HTML content for email notifications
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        organization:
+          type: integer
+          readOnly: true
+      required:
+      - content
+      - created_at
+      - id
+      - name
+      - organization
+      - template_type
+      - updated_at
+    NotificationTypeEnum:
+      enum:
+      - TC
+      - QU
+      - CA
+      - RE
+      - SC
+      - EM
+      type: string
+      description: |-
+        * `TC` - Ticket Created
+        * `QU` - Queue Update
+        * `CA` - Called to Service
+        * `RE` - Reminder
+        * `SC` - Status Change
+        * `EM` - Emergency
+    NullEnum:
+      enum:
+      - null
+    PatchedAgentPerformance:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        agent_name:
+          type: string
+          readOnly: true
+        agent_email:
+          type: string
+          format: email
+          readOnly: true
+        date:
+          type: string
+          format: date
+        customers_served:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        average_service_time:
+          type: string
+        service_rating:
+          type: number
+          format: double
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        agent:
+          type: integer
+    PatchedBillingContact:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        phone:
+          type: string
+          maxLength: 20
+        is_primary:
+          type: boolean
+        address:
+          type: string
+        tax_id:
+          type: string
+          maxLength: 50
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        organization:
+          type: integer
+          readOnly: true
+    PatchedCustomerFeedback:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        ticket_number:
+          type: string
+          readOnly: true
+        average_rating:
+          type: string
+          readOnly: true
+        rating:
+          allOf:
+          - $ref: '#/components/schemas/ServiceSatisfactionEnum'
+          minimum: -2147483648
+          maximum: 2147483647
+        comment:
+          type: string
+        wait_time_satisfaction:
+          allOf:
+          - $ref: '#/components/schemas/ServiceSatisfactionEnum'
+          minimum: -2147483648
+          maximum: 2147483647
+        service_satisfaction:
+          allOf:
+          - $ref: '#/components/schemas/ServiceSatisfactionEnum'
+          minimum: -2147483648
+          maximum: 2147483647
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        ticket:
+          type: integer
+    PatchedFAQ:
+      type: object
+      description: Serializer for FAQs.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        question:
+          type: string
+          maxLength: 500
+        answer:
+          type: string
+        category:
+          $ref: '#/components/schemas/CategoryD6eEnum'
+        tags:
+          type: array
+          items:
+            type: string
+            maxLength: 50
+        is_published:
+          type: boolean
+        helpful_count:
+          type: integer
+          readOnly: true
+        not_helpful_count:
+          type: integer
+          readOnly: true
+        view_count:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedGeofencingZone:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        coordinates:
+          type: array
+          items:
+            type: array
+            items:
+              type: array
+              items:
+                type: number
+                format: double
+          writeOnly: true
+        bounds:
+          type: string
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        zone_type:
+          $ref: '#/components/schemas/ZoneTypeEnum'
+        polygon:
+          type: string
+          description: Zone boundaries
+        radius:
+          type: number
+          format: double
+          description: Buffer radius in meters
+        is_active:
+          type: boolean
+        notification_enabled:
+          type: boolean
+        dwell_time:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          description: Minimum time in seconds to trigger dwell event
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        organization:
+          type: integer
+          readOnly: true
+    PatchedKnowledgeBase:
+      type: object
+      description: Serializer for knowledge base articles.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        title:
+          type: string
+          maxLength: 200
+        content:
+          type: string
+        category:
+          $ref: '#/components/schemas/Category27aEnum'
+        tags:
+          type: array
+          items:
+            type: string
+            maxLength: 50
+        is_published:
+          type: boolean
+        helpful_count:
+          type: integer
+          readOnly: true
+        not_helpful_count:
+          type: integer
+          readOnly: true
+        view_count:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedLocationBasedService:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        coordinates:
+          type: string
+          readOnly: true
+        distance:
+          type: string
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        service_type:
+          $ref: '#/components/schemas/ServiceTypeEnum'
+        location:
+          type: string
+        radius:
+          type: number
+          format: double
+          description: Service coverage radius in meters
+        is_active:
+          type: boolean
+        operating_hours:
+          description: Operating hours by day of week
+        capacity:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+          description: Maximum number of users that can be served
+        current_load:
+          type: integer
+          readOnly: true
+          description: Current number of users being served
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        organization:
+          type: integer
+          readOnly: true
+    PatchedNotification:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        content_type:
+          type: string
+          title: Nom de la classe python du modèle
+        recipient_email:
+          type: string
+          format: email
+          writeOnly: true
+        template_name:
+          type: string
+          writeOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/Status45fEnum'
+          readOnly: true
+        priority:
+          $ref: '#/components/schemas/NotificationPriorityEnum'
+        subject:
+          type: string
+          maxLength: 255
+        content:
+          type: string
+        data:
+          description: Additional data for the notification
+        object_id:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+        scheduled_for:
+          type: string
+          format: date-time
+          nullable: true
+        sent_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        delivered_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        read_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        error_message:
+          type: string
+          readOnly: true
+        retry_count:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        template:
+          type: integer
+        channel:
+          type: integer
+        recipient:
+          type: integer
+    PatchedNotificationBatch:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        recipients_filter:
+          description: Filter criteria for recipients
+        data:
+          description: Data for notification content
+        scheduled_for:
+          type: string
+          format: date-time
+          nullable: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/Status45fEnum'
+          readOnly: true
+        total_count:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        sent_count:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        failed_count:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        template:
+          type: integer
+        channel:
+          type: integer
+    PatchedNotificationChannel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        channel_type:
+          $ref: '#/components/schemas/ChannelTypeEnum'
+        configuration:
+          description: Channel specific configuration
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        organization:
+          type: integer
+          readOnly: true
+    PatchedNotificationPreference:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        channel_type:
+          $ref: '#/components/schemas/ChannelTypeEnum'
+        is_enabled:
+          type: boolean
+        quiet_hours_start:
+          type: string
+          format: time
+          nullable: true
+        quiet_hours_end:
+          type: string
+          format: time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        user:
+          type: integer
+          readOnly: true
+    PatchedNotificationTemplate:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        template_type:
+          $ref: '#/components/schemas/TemplateTypeEnum'
+        subject:
+          type: string
+          description: Subject for email notifications
+          maxLength: 255
+        content:
+          type: string
+          description: Template content with placeholders
+        html_content:
+          type: string
+          description: HTML content for email notifications
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        organization:
+          type: integer
+          readOnly: true
+    PatchedProximityAlert:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        service_name:
+          type: string
+          readOnly: true
+        alert_type:
+          $ref: '#/components/schemas/AlertTypeEnum'
+        target_location:
+          type: string
+        radius:
+          type: number
+          format: double
+          description: Alert radius in meters
+        message:
+          type: string
+        is_active:
+          type: boolean
+        one_time:
+          type: boolean
+          description: If True, alert will be deactivated after first trigger
+        start_time:
+          type: string
+          format: date-time
+          nullable: true
+        end_time:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        triggered_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        user:
+          type: integer
+          readOnly: true
+    PatchedQueue:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        service_points:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServicePoint'
+          readOnly: true
+        active_tickets_count:
+          type: string
+          readOnly: true
+        estimated_wait_time:
+          type: string
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        status:
+          $ref: '#/components/schemas/QueueStatusEnum'
+        current_number:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        current_wait_time:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          description: Current wait time in minutes
+        is_priority:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        queue_type:
+          type: integer
+        location:
+          type: integer
+          nullable: true
+    PatchedQueueMetrics:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        queue_name:
+          type: string
+          readOnly: true
+        service_efficiency_percentage:
+          type: string
+          readOnly: true
+        date:
+          type: string
+          format: date
+        average_wait_time:
+          type: string
+        total_customers:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        served_customers:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        abandoned_customers:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        peak_hours:
+          type: array
+          items:
+            type: string
+            format: time
+        service_efficiency:
+          type: number
+          format: double
+          description: Ratio of served to total customers
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        queue:
+          type: integer
+    PatchedQueueType:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        category:
+          $ref: '#/components/schemas/QueueTypeCategoryEnum'
+        description:
+          type: string
+        estimated_service_time:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          description: Estimated service time in minutes
+        max_capacity:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          description: Maximum number of tickets allowed
+        priority_levels:
+          description: Priority levels configuration
+        requires_vehicle_info:
+          type: boolean
+        requires_identification:
+          type: boolean
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        organization:
+          type: integer
+        branch:
+          type: integer
+    PatchedServicePoint:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        assigned_agent_name:
+          type: string
+          readOnly: true
+        current_ticket_number:
+          type: string
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        status:
+          $ref: '#/components/schemas/ServicePointStatusEnum'
+        is_vehicle_compatible:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        branch:
+          type: integer
+        location:
+          type: integer
+          nullable: true
+        current_ticket:
+          type: integer
+          nullable: true
+        assigned_agent:
+          type: integer
+          nullable: true
+    PatchedSubscription:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        plan_name:
+          type: string
+          readOnly: true
+        organization_name:
+          type: string
+          readOnly: true
+        days_remaining:
+          type: string
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/SubscriptionStatusEnum'
+        start_date:
+          type: string
+          format: date-time
+        end_date:
+          type: string
+          format: date-time
+        auto_renew:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        organization:
+          type: integer
+          readOnly: true
+        plan:
+          type: integer
+    PatchedSupportTicket:
+      type: object
+      description: Serializer for support tickets.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        reference_number:
+          type: string
+          readOnly: true
+        title:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+        status:
+          $ref: '#/components/schemas/Status519Enum'
+        status_display:
+          type: string
+          readOnly: true
+        priority:
+          $ref: '#/components/schemas/PriorityFd2Enum'
+        priority_display:
+          type: string
+          readOnly: true
+        category:
+          $ref: '#/components/schemas/Category329Enum'
+        tags:
+          type: array
+          items:
+            type: string
+            maxLength: 50
+        created_by:
+          type: integer
+          readOnly: true
+          nullable: true
+        created_by_name:
+          type: string
+          readOnly: true
+        assigned_to:
+          type: integer
+          readOnly: true
+          nullable: true
+        assigned_to_name:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        closed_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        satisfaction_rating:
+          readOnly: true
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/SatisfactionRatingEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        feedback:
+          type: string
+          readOnly: true
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketMessage'
+          readOnly: true
+    PatchedTicket:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        position:
+          type: string
+          readOnly: true
+        user_name:
+          type: string
+          readOnly: true
+        queue_name:
+          type: string
+          readOnly: true
+        number:
+          type: string
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/TicketStatusEnum'
+        priority_level:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        estimated_wait_time:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          description: Estimated wait time in minutes
+        check_in_time:
+          type: string
+          format: date-time
+          readOnly: true
+        called_time:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        service_start_time:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        service_end_time:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        vehicle_info:
+          nullable: true
+          description: Vehicle information if applicable
+        identification_info:
+          nullable: true
+          description: Identification information if required
+        notes:
+          type: string
+        queue:
+          type: integer
+        user:
+          type: integer
+        location:
+          type: integer
+          nullable: true
+    PatchedVehicleCategory:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        max_size:
+          description: Maximum vehicle dimensions (length, width, height) in meters
+        requires_special_handling:
+          type: boolean
+        service_time_multiplier:
+          type: number
+          format: double
+          description: Multiplier for base service time
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+    Payment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        invoice_number:
+          type: string
+          readOnly: true
+        organization_name:
+          type: string
+          readOnly: true
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        payment_method:
+          $ref: '#/components/schemas/PaymentMethodEnum'
+        status:
+          $ref: '#/components/schemas/PaymentStatusEnum'
+        transaction_id:
+          type: string
+          maxLength: 255
+        payment_date:
+          type: string
+          format: date-time
+        notes:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        invoice:
+          type: integer
+          readOnly: true
+      required:
+      - amount
+      - created_at
+      - id
+      - invoice
+      - invoice_number
+      - organization_name
+      - payment_date
+      - payment_method
+      - updated_at
+    PaymentMethodEnum:
+      enum:
+      - CC
+      - BT
+      - PP
+      - MM
+      - CA
+      type: string
+      description: |-
+        * `CC` - Credit Card
+        * `BT` - Bank Transfer
+        * `PP` - PayPal
+        * `MM` - Mobile Money
+        * `CA` - Cash
+    PaymentStatusEnum:
+      enum:
+      - PE
+      - CO
+      - FA
+      - RE
+      type: string
+      description: |-
+        * `PE` - Pending
+        * `CO` - Completed
+        * `FA` - Failed
+        * `RE` - Refunded
+    PlanTypeEnum:
+      enum:
+      - FR
+      - BA
+      - PR
+      - EN
+      type: string
+      description: |-
+        * `FR` - Free
+        * `BA` - Basic
+        * `PR` - Professional
+        * `EN` - Enterprise
+    PriorityFd2Enum:
+      enum:
+      - LO
+      - ME
+      - HI
+      - UR
+      type: string
+      description: |-
+        * `LO` - Low
+        * `ME` - Medium
+        * `HI` - High
+        * `UR` - Urgent
+    ProximityAlert:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        service_name:
+          type: string
+          readOnly: true
+        alert_type:
+          $ref: '#/components/schemas/AlertTypeEnum'
+        target_location:
+          type: string
+        radius:
+          type: number
+          format: double
+          description: Alert radius in meters
+        message:
+          type: string
+        is_active:
+          type: boolean
+        one_time:
+          type: boolean
+          description: If True, alert will be deactivated after first trigger
+        start_time:
+          type: string
+          format: date-time
+          nullable: true
+        end_time:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        triggered_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        user:
+          type: integer
+          readOnly: true
+      required:
+      - alert_type
+      - created_at
+      - id
+      - message
+      - radius
+      - service_name
+      - target_location
+      - triggered_at
+      - user
+    Queue:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        service_points:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServicePoint'
+          readOnly: true
+        active_tickets_count:
+          type: string
+          readOnly: true
+        estimated_wait_time:
+          type: string
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        status:
+          $ref: '#/components/schemas/QueueStatusEnum'
+        current_number:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        current_wait_time:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          description: Current wait time in minutes
+        is_priority:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        queue_type:
+          type: integer
+        location:
+          type: integer
+          nullable: true
+      required:
+      - active_tickets_count
+      - created_at
+      - estimated_wait_time
+      - id
+      - name
+      - queue_type
+      - service_points
+      - updated_at
+    QueueAnalytics:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        date:
+          type: string
+          format: date
+        total_tickets:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        served_tickets:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        cancelled_tickets:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        no_shows:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        average_wait_time:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          description: Average wait time in minutes
+        average_service_time:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          description: Average service time in minutes
+        peak_hours:
+          description: Peak hours data
+        satisfaction_score:
+          type: number
+          format: double
+          nullable: true
+          description: Average satisfaction score (0-5)
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        queue:
+          type: integer
+      required:
+      - created_at
+      - date
+      - id
+      - queue
+    QueueMetrics:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        queue_name:
+          type: string
+          readOnly: true
+        service_efficiency_percentage:
+          type: string
+          readOnly: true
+        date:
+          type: string
+          format: date
+        average_wait_time:
+          type: string
+        total_customers:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        served_customers:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        abandoned_customers:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        peak_hours:
+          type: array
+          items:
+            type: string
+            format: time
+        service_efficiency:
+          type: number
+          format: double
+          description: Ratio of served to total customers
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        queue:
+          type: integer
+      required:
+      - abandoned_customers
+      - average_wait_time
+      - created_at
+      - date
+      - id
+      - peak_hours
+      - queue
+      - queue_name
+      - served_customers
+      - service_efficiency
+      - service_efficiency_percentage
+      - total_customers
+    QueueNotification:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        notification_type:
+          $ref: '#/components/schemas/NotificationTypeEnum'
+        message:
+          type: string
+        sent_via:
+          $ref: '#/components/schemas/SentViaEnum'
+        sent_at:
+          type: string
+          format: date-time
+          readOnly: true
+        delivered_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        read_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        error_message:
+          type: string
+        ticket:
+          type: integer
+      required:
+      - delivered_at
+      - id
+      - message
+      - notification_type
+      - read_at
+      - sent_at
+      - sent_via
+      - ticket
+    QueueStatusEnum:
+      enum:
+      - AC
+      - PA
+      - CL
+      - MA
+      type: string
+      description: |-
+        * `AC` - Active
+        * `PA` - Paused
+        * `CL` - Closed
+        * `MA` - Maintenance
+    QueueType:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        category:
+          $ref: '#/components/schemas/QueueTypeCategoryEnum'
+        description:
+          type: string
+        estimated_service_time:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          description: Estimated service time in minutes
+        max_capacity:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          description: Maximum number of tickets allowed
+        priority_levels:
+          description: Priority levels configuration
+        requires_vehicle_info:
+          type: boolean
+        requires_identification:
+          type: boolean
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        organization:
+          type: integer
+        branch:
+          type: integer
+      required:
+      - branch
+      - created_at
+      - id
+      - name
+      - organization
+      - updated_at
+    QueueTypeCategoryEnum:
+      enum:
+      - VE
+      - PE
+      - MI
+      type: string
+      description: |-
+        * `VE` - Vehicle
+        * `PE` - Person
+        * `MI` - Mixed
+    SatisfactionRatingEnum:
+      enum:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      type: integer
+      description: |-
+        * `1` - 1
+        * `2` - 2
+        * `3` - 3
+        * `4` - 4
+        * `5` - 5
+    SentViaEnum:
+      enum:
+      - sms
+      - email
+      - push
+      - whatsapp
+      type: string
+      description: |-
+        * `sms` - SMS
+        * `email` - Courriel
+        * `push` - Push Notification
+        * `whatsapp` - WhatsApp
+    ServicePoint:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        assigned_agent_name:
+          type: string
+          readOnly: true
+        current_ticket_number:
+          type: string
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        status:
+          $ref: '#/components/schemas/ServicePointStatusEnum'
+        is_vehicle_compatible:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        branch:
+          type: integer
+        location:
+          type: integer
+          nullable: true
+        current_ticket:
+          type: integer
+          nullable: true
+        assigned_agent:
+          type: integer
+          nullable: true
+      required:
+      - assigned_agent_name
+      - branch
+      - created_at
+      - current_ticket_number
+      - id
+      - name
+      - updated_at
+    ServicePointStatusEnum:
+      enum:
+      - AV
+      - BU
+      - OF
+      - BR
+      type: string
+      description: |-
+        * `AV` - Available
+        * `BU` - Busy
+        * `OF` - Offline
+        * `BR` - Break
+    ServiceSatisfactionEnum:
+      enum:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      type: integer
+      description: |-
+        * `1` - Very Poor
+        * `2` - Poor
+        * `3` - Average
+        * `4` - Good
+        * `5` - Excellent
+    ServiceTypeEnum:
+      enum:
+      - QU
+      - PA
+      - IN
+      - AS
+      type: string
+      description: |-
+        * `QU` - Queue
+        * `PA` - Parking
+        * `IN` - Information
+        * `AS` - Assistance
+    Status45fEnum:
+      enum:
+      - PE
+      - SC
+      - SE
+      - ST
+      - DE
+      - RE
+      - FA
+      type: string
+      description: |-
+        * `PE` - Pending
+        * `SC` - Scheduled
+        * `SE` - Sending
+        * `ST` - Sent
+        * `DE` - Delivered
+        * `RE` - Read
+        * `FA` - Failed
+    Status519Enum:
+      enum:
+      - NE
+      - AS
+      - IP
+      - PE
+      - RE
+      - CL
+      type: string
+      description: |-
+        * `NE` - New
+        * `AS` - Assigned
+        * `IP` - In Progress
+        * `PE` - Pending
+        * `RE` - Resolved
+        * `CL` - Closed
+    Subscription:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        plan_name:
+          type: string
+          readOnly: true
+        organization_name:
+          type: string
+          readOnly: true
+        days_remaining:
+          type: string
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/SubscriptionStatusEnum'
+        start_date:
+          type: string
+          format: date-time
+        end_date:
+          type: string
+          format: date-time
+        auto_renew:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        organization:
+          type: integer
+          readOnly: true
+        plan:
+          type: integer
+      required:
+      - created_at
+      - days_remaining
+      - end_date
+      - id
+      - organization
+      - organization_name
+      - plan
+      - plan_name
+      - start_date
+      - updated_at
+    SubscriptionPlan:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        plan_type:
+          $ref: '#/components/schemas/PlanTypeEnum'
+        description:
+          type: string
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        billing_cycle:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          description: Billing cycle in months
+        max_queues:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        max_users:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        max_service_points:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        includes_analytics:
+          type: boolean
+        includes_ar:
+          type: boolean
+        includes_api_access:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - billing_cycle
+      - created_at
+      - description
+      - id
+      - max_queues
+      - max_service_points
+      - max_users
+      - name
+      - price
+      - updated_at
+    SubscriptionStatusEnum:
+      enum:
+      - AC
+      - PE
+      - CA
+      - EX
+      type: string
+      description: |-
+        * `AC` - Active
+        * `PE` - Pending
+        * `CA` - Cancelled
+        * `EX` - Expired
+    SupportSearch:
+      type: object
+      description: Serializer for support resource search.
+      properties:
+        query:
+          type: string
+          description: Search query to filter results
+        ticket_status:
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketStatusEnum'
+          description: Filter tickets by status
+        ticket_priority:
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketPriorityEnum'
+          description: Filter tickets by priority
+        ticket_category:
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketCategoryEnum'
+          description: Filter tickets by category
+        faq_category:
+          type: array
+          items:
+            $ref: '#/components/schemas/FaqCategoryEnum'
+          description: Filter FAQs by category
+        kb_category:
+          type: array
+          items:
+            $ref: '#/components/schemas/KbCategoryEnum'
+          description: Filter knowledge base articles by category
+        date_from:
+          type: string
+          format: date-time
+          description: Filter results created after this date
+        date_to:
+          type: string
+          format: date-time
+          description: Filter results created before this date
+        tags:
+          type: array
+          items:
+            type: string
+          description: Filter results by tags
+    SupportTicket:
+      type: object
+      description: Serializer for support tickets.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        reference_number:
+          type: string
+          readOnly: true
+        title:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+        status:
+          $ref: '#/components/schemas/Status519Enum'
+        status_display:
+          type: string
+          readOnly: true
+        priority:
+          $ref: '#/components/schemas/PriorityFd2Enum'
+        priority_display:
+          type: string
+          readOnly: true
+        category:
+          $ref: '#/components/schemas/Category329Enum'
+        tags:
+          type: array
+          items:
+            type: string
+            maxLength: 50
+        created_by:
+          type: integer
+          readOnly: true
+          nullable: true
+        created_by_name:
+          type: string
+          readOnly: true
+        assigned_to:
+          type: integer
+          readOnly: true
+          nullable: true
+        assigned_to_name:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        closed_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        satisfaction_rating:
+          readOnly: true
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/SatisfactionRatingEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        feedback:
+          type: string
+          readOnly: true
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketMessage'
+          readOnly: true
+      required:
+      - assigned_to
+      - assigned_to_name
+      - closed_at
+      - created_at
+      - created_by
+      - created_by_name
+      - description
+      - feedback
+      - id
+      - messages
+      - priority_display
+      - reference_number
+      - satisfaction_rating
+      - status_display
+      - title
+      - updated_at
+    TemplateTypeEnum:
+      enum:
+      - EM
+      - SM
+      - PU
+      - WA
+      - IA
+      type: string
+      description: |-
+        * `EM` - Courriel
+        * `SM` - SMS
+        * `PU` - Push
+        * `WA` - WhatsApp
+        * `IA` - In-App
+    Ticket:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        position:
+          type: string
+          readOnly: true
+        user_name:
+          type: string
+          readOnly: true
+        queue_name:
+          type: string
+          readOnly: true
+        number:
+          type: string
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/TicketStatusEnum'
+        priority_level:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        estimated_wait_time:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          description: Estimated wait time in minutes
+        check_in_time:
+          type: string
+          format: date-time
+          readOnly: true
+        called_time:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        service_start_time:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        service_end_time:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        vehicle_info:
+          nullable: true
+          description: Vehicle information if applicable
+        identification_info:
+          nullable: true
+          description: Identification information if required
+        notes:
+          type: string
+        queue:
+          type: integer
+        user:
+          type: integer
+        location:
+          type: integer
+          nullable: true
+      required:
+      - called_time
+      - check_in_time
+      - id
+      - number
+      - position
+      - queue
+      - queue_name
+      - service_end_time
+      - service_start_time
+      - user
+      - user_name
+    TicketAssign:
+      type: object
+      description: Serializer for ticket assignment.
+      properties:
+        assigned_to:
+          type: integer
+          description: ID of the staff member to assign the ticket to
+        note:
+          type: string
+          description: Optional internal note about the assignment
+      required:
+      - assigned_to
+    TicketCategoryEnum:
+      enum:
+      - TE
+      - BI
+      - AC
+      - FE
+      - BU
+      - OT
+      type: string
+      description: |-
+        * `TE` - Technical
+        * `BI` - Billing
+        * `AC` - Account
+        * `FE` - Feature Request
+        * `BU` - Bug Report
+        * `OT` - Other
+    TicketMessage:
+      type: object
+      description: Serializer for ticket messages.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        ticket:
+          type: integer
+        sender:
+          type: integer
+          readOnly: true
+          nullable: true
+        sender_name:
+          type: string
+          readOnly: true
+        sender_email:
+          type: string
+          format: email
+          readOnly: true
+        content:
+          type: string
+        is_internal:
+          type: boolean
+          description: Internal note visible only to staff
+        attachments:
+          type: array
+          items:
+            type: string
+            maxLength: 255
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - content
+      - created_at
+      - id
+      - sender
+      - sender_email
+      - sender_name
+      - ticket
+    TicketPriorityEnum:
+      enum:
+      - LO
+      - ME
+      - HI
+      - UR
+      type: string
+      description: |-
+        * `LO` - Low
+        * `ME` - Medium
+        * `HI` - High
+        * `UR` - Urgent
+    TicketReply:
+      type: object
+      description: Serializer for ticket replies.
+      properties:
+        content:
+          type: string
+          description: Message content
+        is_internal:
+          type: boolean
+          default: false
+          description: Whether this is an internal note visible only to staff
+        attachments:
+          type: array
+          items:
+            type: string
+            format: uri
+          description: List of files to attach to the message
+      required:
+      - content
+    TicketStatusEnum:
+      enum:
+      - WA
+      - CA
+      - SE
+      - CO
+      - CN
+      - NS
+      - TR
+      type: string
+      description: |-
+        * `WA` - Waiting
+        * `CA` - Called
+        * `SE` - Serving
+        * `CO` - Completed
+        * `CN` - Cancelled
+        * `NS` - No Show
+        * `TR` - Transferred
+    TicketStatusUpdate:
+      type: object
+      description: Serializer for ticket status updates.
+      properties:
+        status:
+          allOf:
+          - $ref: '#/components/schemas/Status519Enum'
+          description: |-
+            New status for the ticket
+
+            * `NE` - New
+            * `AS` - Assigned
+            * `IP` - In Progress
+            * `PE` - Pending
+            * `RE` - Resolved
+            * `CL` - Closed
+        note:
+          type: string
+          description: Optional internal note about the status change
+      required:
+      - status
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          writeOnly: true
+      required:
+      - access
+      - refresh
+    UserLocation:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        latitude:
+          type: number
+          format: double
+          writeOnly: true
+        longitude:
+          type: number
+          format: double
+          writeOnly: true
+        coordinates:
+          type: string
+          readOnly: true
+        location:
+          type: string
+          description: Location coordinates (longitude, latitude)
+        accuracy:
+          type: number
+          format: double
+          nullable: true
+          description: Accuracy of the location in meters
+        altitude:
+          type: number
+          format: double
+          nullable: true
+          description: Altitude in meters
+        speed:
+          type: number
+          format: double
+          nullable: true
+          description: Speed in meters per second
+        heading:
+          type: number
+          format: double
+          nullable: true
+          description: Heading in degrees
+        timestamp:
+          type: string
+          format: date-time
+          readOnly: true
+        is_moving:
+          type: boolean
+        battery_level:
+          type: number
+          format: double
+          nullable: true
+          description: Device battery level (0-1)
+        connection_type:
+          $ref: '#/components/schemas/ConnectionTypeEnum'
+        user:
+          type: integer
+          readOnly: true
+      required:
+      - coordinates
+      - id
+      - latitude
+      - location
+      - longitude
+      - timestamp
+      - user
+    VehicleCategory:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        max_size:
+          description: Maximum vehicle dimensions (length, width, height) in meters
+        requires_special_handling:
+          type: boolean
+        service_time_multiplier:
+          type: number
+          format: double
+          description: Multiplier for base service time
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - name
+    ZoneTypeEnum:
+      enum:
+      - EN
+      - EX
+      - DW
+      - PA
+      - SE
+      type: string
+      description: |-
+        * `EN` - Entry
+        * `EX` - Exit
+        * `DW` - Dwell
+        * `PA` - Parking
+        * `SE` - Service
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
