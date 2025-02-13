@@ -447,3 +447,24 @@ class SecurityKeyViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+from rest_framework_simplejwt.views import TokenRefreshView
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+from rest_framework.response import Response
+from rest_framework import status
+
+class CustomTokenRefreshView(TokenRefreshView):
+    def post(self, request, *args, **kwargs):
+        try:
+            print(f"Tentative de rafraîchissement - Token: {request.data.get('refresh')}")
+            
+            response = super().post(request, *args, **kwargs)
+            
+            print(f"Rafraîchissement réussi : {response.data}")
+            
+            return response
+        except TokenError as e:
+            print(f"Erreur de refresh token : {str(e)}")
+            return Response(
+                {'detail': 'Token de rafraîchissement invalide ou expiré'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )

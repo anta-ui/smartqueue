@@ -1,43 +1,77 @@
-
 "use client";
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import api from '@/services/axios';
+import { Card } from "@/components/ui/card";
 
-import Image from "next/image";
-import React from "react";
-import Link from "next/link";
-import "./globals.css";
-export default function Home() {
+interface DashboardStats {
+  totalQueues: number;
+  activeQueues: number;
+  totalTickets: number;
+  averageWaitTime: number;
+}
+
+export default function DashboardPage() {
+  const router = useRouter();
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchDashboardStats = async () => {
+      try {
+        const response = await api.get('/dashboard/stats/');
+        setStats(response.data);
+        setLoading(false);
+      } catch (error: any) {
+        console.error('Erreur de récupération des stats:', error);
+        
+        if (error.response?.status === 401) {
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
+          router.push('/login');
+        } else {
+          setError('Impossible de charger les statistiques');
+        }
+        
+        setLoading(false);
+      }
+    };
+
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+
+    fetchDashboardStats();
+  }, [router]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-[200px]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-red-500 text-center mt-10">
+        {error}
+      </div>
+    );
+  }
+
   return (
-    <div
-      className="min-h-screen bg-cover bg-center flex flex-col justify-center items-center text-white"
-      style={{
-        backgroundImage: `url('/images/back2.jpeg')`, // Remplacez par le chemin de votre image
-      }}
-    >
-      {/* Overlay pour assombrir l'image de fond */}
-      <div className="absolute inset-0 bg-black bg-opacity-30"></div>
-
-      {/* Contenu principal */}
-      <div className="relative z-10 text-center">
-        <h1 className="text-7xl font-bold mb-4 text-blue-800">Bienvenue sur SmartQueue</h1>
-        <p className="text-2xl mb-8 ">
-        Rejoignez-nous et optimisez votre temps en gérant vos files d'attente de manière fluide et intelligente.
-        </p>
-
-        {/* Boutons */}
-        <div className="space-x-4">
-          <Link
-            href="/register" // Remplacez par votre route d'inscription
-            className="bg-blue-800 hover:bg-blue-500 text-white text-xl font-semibold py-4 px-6 rounded-lg transition duration-300"
-          >
-            S'inscrire
-          </Link>
-          <Link
-            href="/login" // Remplacez par votre route de connexion
-            className="bg-blue-800 hover:bg-Blue-500 text-white text-xl font-semibold py-4 px-6 rounded-lg transition duration-300"
-          >
-            Se Connecter
-          </Link>
-        </div>
+    <div>
+      <h1 className="text-2xl font-bold mb-6">Tableau de bord</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card className="p-6">
+          <h3 className="text-sm font-medium text-gray-500">Files d'attente totales</h3>
+          <p className="mt-2 text-3xl font-semibold">{stats?.totalQueues || 0}</p>
+        </Card>
+        {/* Autres cartes similaires */}
       </div>
     </div>
   );

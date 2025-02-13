@@ -1,64 +1,34 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-
-// Routes publiques qui ne nécessitent pas d'authentification
-const publicRoutes = [
-  "/",
-  "/login",
-  "/register",
-  "/reset-password",
-  "/verify-email",
-];
+import { NextRequest, NextResponse } from "next/server";
 
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+    const pathname = request.nextUrl.pathname;
+    const token = request.cookies.get("access_token")?.value;
+    const hasToken = Boolean(token);
 
-  // Vérifier si c'est une route publique
-  const isPublicRoute = publicRoutes.includes(pathname);
+    // Définition des routes protégées et publiques
+    const dashboardRoutes = ["/dashboard", "/dashboard/settings", "/dashboard/profile"];
+    const publicRoutes = ["/", "/login", "/register"];
 
-  // Récupérer le token depuis les cookies
-  const token = request.cookies.get('access_token')?.value;
+    console.log(`Middleware - Path: ${pathname}, Token présent: ${hasToken}`);
 
-  // Vérifier si un token est présent
-  const hasToken = !!token;
+    // Si l'utilisateur n'est pas authentifié et tente d'accéder à une page du dashboard
+    if (!hasToken && dashboardRoutes.some(route => pathname.startsWith(route))) {
+        console.log("🚨 Redirection vers /login (Pas de token)");
+        return NextResponse.redirect(new URL("/login", request.url));
+    }
 
-  console.log("Middleware executed", { pathname, hasToken });
+    // Si l'utilisateur est déjà connecté et tente d'accéder à une page publique
+    if (hasToken && publicRoutes.includes(pathname)) {
+        console.log("✅ Redirection vers /dashboard (Déjà authentifié)");
+        return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
 
-  // Si c'est une ressource statique (images, fichiers, etc.), ne pas intercepter
-  if (
-    pathname.startsWith("/images/") ||
-    pathname.startsWith("/_next/") || // Pour les fichiers Next.js générés (JS, CSS, etc.)
-    pathname.startsWith("/fonts/") || // Si vous avez des polices
-    pathname.startsWith("/icons/") || // Si vous avez des icônes
-    pathname.match(/\.[a-zA-Z0-9]{1,5}$/) // Si c'est un fichier avec une extension (ex: .jpg, .png, .css)
-  ) {
-    return NextResponse.next(); // Laisse passer la requête sans intercepter
-  }
-
-  // Si l'utilisateur n'est pas authentifié et essaie d'accéder à une route protégée
-  if (!hasToken && !isPublicRoute) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
-
-  // Si l'utilisateur est authentifié et essaie d'accéder à une route publique (sauf la page d'accueil)
-  if (hasToken && isPublicRoute && pathname !== "/" && pathname !== "/login" && pathname !== "/register" && pathname !== "/reset-password" && pathname !== "/verify-email") {
-    return NextResponse.redirect(new URL("/dashboard/home", request.url));
-  }
-
-  // Si le token est présent et valide, laisser passer la requête
-  return NextResponse.next();
+    // Si tout est OK, on laisse passer la requête
+    console.log("✅ Accès autorisé à:", pathname);
+    return NextResponse.next();
 }
 
+// Liste des chemins où le middleware doit s'appliquer
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except:
-     * 1. /api routes
-     * 2. /_next (Next.js internals)
-     * 3. /fonts (inside /public)
-     * 4. /icons (inside /public)
-     * 5. all root files inside /public (e.g. /favicon.ico)
-     */
-    "/((?!api|_next|fonts|icons|images|[\\w-]+\\.\\w+).*)", // Exclut les chemins pour les images et autres fichiers statiques
-  ],
+    matcher: ["/dashboard/:path*", "/login", "/register", "/"],
 };

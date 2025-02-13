@@ -58,7 +58,7 @@ urlpatterns = [
     path('consent/bulk-update/', UserConsentBulkUpdateView.as_view(), name='consent-bulk-update'),
     
     # Dashboard
-    path('dashboard/stats/', DashboardStatsView.as_view(), name='dashboard-stats'),
+   path('dashboard/stats/', DashboardStatsView.as_view(), name='dashboard-stats'),
     
     # API Router
     path('', include(router.urls)),

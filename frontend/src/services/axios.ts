@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000/api',
+  baseURL: 'http://localhost:8000/api', 
   withCredentials: true
 });
 
@@ -26,22 +26,19 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        // Tentative de rafraîchissement du token
         const refreshToken = localStorage.getItem('refresh_token');
-        const response = await axios.post('http://localhost:8000/api/auth/token/refresh/', {
-          refresh: refreshToken
+        const response = await axios.post('/auth/token/refresh/', { 
+          refresh: refreshToken 
         });
 
         const { access } = response.data;
         
-        // Mettre à jour les tokens
         localStorage.setItem('access_token', access);
         
-        // Réessayer la requête originale
         originalRequest.headers['Authorization'] = `Bearer ${access}`;
         return axios(originalRequest);
       } catch (refreshError) {
-        // Échec du rafraîchissement, déconnecter l'utilisateur
+        // Déconnexion en cas d'échec du rafraîchissement
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
         window.location.href = '/login';

@@ -1,15 +1,14 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import axios from "axios";
-import { setCookie } from "cookies-next";
 import Link from "next/link";
 
+// Configuration axios
 axios.defaults.baseURL = "http://localhost:8000/api";
 axios.defaults.withCredentials = true;
 
@@ -21,6 +20,7 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
+
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -55,45 +55,36 @@ export default function LoginPage() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
-    if (!validateForm()) {
-      setLoading(false);
-      return;
-    }
-
+  
     try {
-      const response = await axios.post("/auth/token/", {
-        email: formData.email,
-        password: formData.password,
+      const response = await axios.post("/auth/token/", formData, {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true  // Important pour les cookies
       });
-
-      setCookie('access_token', response.data.access);
-      setCookie('refresh_token', response.data.refresh);
-      setCookie('email_verified', response.data.email_verified);
-
+  
+      // Stocker dans localStorage ET définir le cookie
+      localStorage.setItem('access_token', response.data.access);
+      localStorage.setItem('refresh_token', response.data.refresh);
+  
+      // Définir le cookie côté client (temporaire)
+      document.cookie = `access_token=${response.data.access}; path=/`;
+  
       axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.access}`;
-
+  
       toast({
         title: "Connexion réussie",
         description: "Vous êtes maintenant connecté.",
       });
-
-      router.push("/dashboard/home");
+  
+      router.push('/dashboard');
     } catch (error: any) {
-      toast({
-        title: "Erreur de connexion",
-        description: error.response?.data?.detail || "Une erreur s'est produite",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
+      // ... gestion d'erreur existante ...
     }
   };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat"
       style={{
-        backgroundImage: `url('/images/back2.jpeg')`, // Chemin de l'image de fond
+        backgroundImage: `url('/images/back2.jpeg')`,
         minHeight: '100vh',
         width: '100vw',
         position: 'fixed',
@@ -103,10 +94,8 @@ export default function LoginPage() {
         bottom: 0,
       }}>
       
-      {/* Carte de connexion */}
       <div className="relative z-20 w-full max-w-md mx-15">
         <div className="bg-white/40 backdrop-blur-md rounded-2xl shadow-xl p-10 space-y-6">
-          {/* Logo ou Icône (à ajouter) */}
           <div className="text-center space-y-4">
             <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-700 to-blue-800 bg-clip-text text-transparent">
               SmartQueue
@@ -150,17 +139,7 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full py-2.5 bg-gradient-to-r from-blue-700 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
-              {loading ? (
-                <span className="flex items-center justify-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Connexion en cours...
-                </span>
-              ) : (
-                "Se connecter"
-              )}
+              {loading ? "Connexion en cours..." : "Se connecter"}
             </Button>
           </form>
   
