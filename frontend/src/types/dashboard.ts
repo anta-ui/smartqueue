@@ -1,3 +1,15 @@
+export interface DashboardStats {
+  totalOrganizations: number;
+  totalQueues: number;
+  activeQueues: number;
+  totalTickets: number;
+  averageWaitTime: number;
+  monthlyRecurringRevenue: number;
+  systemUsageRate: number;  // Ajoutez cette ligne
+  systemHealth: number;     // Ajoutez cette ligne
+}
+
+
 export interface OrganizationLocation {
   id: string;
   name: string;

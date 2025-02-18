@@ -21,8 +21,12 @@ from .views.consent import (
     UserConsentBulkUpdateView,
     UserConsentListView
 )
-from .views.dashboard import DashboardStatsView
-
+from .views import (
+    DashboardStatsView, 
+    OrganizationLocationsView, 
+    AlertsView
+    
+)
 app_name = 'core'
 
 router = DefaultRouter()
@@ -58,8 +62,9 @@ urlpatterns = [
     path('consent/bulk-update/', UserConsentBulkUpdateView.as_view(), name='consent-bulk-update'),
     
     # Dashboard
-   path('dashboard/stats/', DashboardStatsView.as_view(), name='dashboard-stats'),
-    
+    path('dashboard/stats/', DashboardStatsView.as_view(), name='dashboard-stats'),
+    path('dashboard/organization-locations/', OrganizationLocationsView.as_view(), name='organization-locations'),
+    path('dashboard/alerts/', AlertsView.as_view(), name='dashboard-alerts'),
     # API Router
     path('', include(router.urls)),
 ]

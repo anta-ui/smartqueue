@@ -18,9 +18,19 @@ class QueueMetricsViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsOrganizationMember]
 
     def get_queryset(self):
-        return QueueMetrics.objects.filter(
-            queue__organization=self.request.user.organization
-        )
+        user = self.request.user
+        print(f"User: {user}, User ID: {user.id}")
+        organization = getattr(user, 'organization', None)
+        print(f"Organization: {organization}")
+        if not organization:
+            print("No organization found for user")
+            return QueueMetrics.objects.none()
+        queryset = QueueMetrics.objects.filter(queue__queue_type__organization=organization)
+        print(f"Queryset SQL: {queryset.query}")
+        return queryset
+
+    
+        
 
     @action(detail=False, methods=['post'])
     def aggregate(self, request):
@@ -151,9 +161,18 @@ class CustomerFeedbackViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsOrganizationMember]
 
     def get_queryset(self):
-        return CustomerFeedback.objects.filter(
-            ticket__queue__organization=self.request.user.organization
+        user = self.request.user
+        print(f"User: {user}, User ID: {user.id}")
+        organization = getattr(user, 'organization', None)
+        print(f"Organization: {organization}")
+        if not organization:
+            print("No organization found for user")
+            return CustomerFeedback.objects.none()
+        queryset = CustomerFeedback.objects.filter(
+            ticket__queue__queue_type__organization=organization
         )
+        print(f"Queryset SQL: {queryset.query}")
+        return queryset
 
     @action(detail=False, methods=['post'])
     def analyze(self, request):
