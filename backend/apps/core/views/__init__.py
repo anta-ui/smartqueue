@@ -1,7 +1,8 @@
 from .dashboard import (
     DashboardStatsView, 
     OrganizationLocationsView, 
-    AlertsView
+    AlertsView,
+    ServiceStatusView, MetricsView, UsageView
 )
 
 __all__ = [

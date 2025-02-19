@@ -16,17 +16,23 @@ from .views.organization import (
     OrganizationAddMemberView,
     OrganizationRemoveMemberView
 )
+from .views.dashboard import (  # Nouveau import
+    ServiceStatusView,
+    MetricsView,
+    UsageView
+)
+from .views import (
+    DashboardStatsView,
+    OrganizationLocationsView,
+    AlertsView
+)
 from .views.consent import (
     UserConsentCreateView,
     UserConsentBulkUpdateView,
     UserConsentListView
 )
-from .views import (
-    DashboardStatsView, 
-    OrganizationLocationsView, 
-    AlertsView
-    
-)
+
+
 app_name = 'core'
 
 router = DefaultRouter()
@@ -61,10 +67,14 @@ urlpatterns = [
     path('consent/create/', UserConsentCreateView.as_view(), name='consent-create'),
     path('consent/bulk-update/', UserConsentBulkUpdateView.as_view(), name='consent-bulk-update'),
     
-    # Dashboard
-    path('dashboard/stats/', DashboardStatsView.as_view(), name='dashboard-stats'),
+    # Dashboard et API
+    
     path('dashboard/organization-locations/', OrganizationLocationsView.as_view(), name='organization-locations'),
-    path('dashboard/alerts/', AlertsView.as_view(), name='dashboard-alerts'),
+    path('dashboard/stats', DashboardStatsView.as_view(), name='dashboard-stats'),
+    path('dashboard/alerts', AlertsView.as_view(), name='dashboard-alerts'),
+    path('dashboard/services/status', ServiceStatusView.as_view(), name='services-status'),
+    path('dashboard/usage-trends', UsageView.as_view(), name='usage-trends'),
     # API Router
     path('', include(router.urls)),
+     
 ]
