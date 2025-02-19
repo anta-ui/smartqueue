@@ -9,20 +9,17 @@ export interface DashboardStats {
   systemHealth: number;     // Ajoutez cette ligne
 }
 
-
 export interface OrganizationLocation {
   id: string;
   name: string;
   latitude: number;
   longitude: number;
-  status: "active" | "inactive" | "suspended";
-  metrics: {
-    users: number;
-    requests: number;
-    errorRate: number;
-    uptime: number;
-  };
+  activeUsers: number; // Requis
+  status: 'active' | 'limited' | 'inactive';
 }
+
+  
+
 
 export interface GlobalMetrics {
   organizations: {
@@ -203,4 +200,36 @@ export interface PerformanceMetrics {
     disk: number;
     network: number;
   };
+}
+export interface SystemLog {
+  id: string;
+  timestamp: string;
+  level: 'info' | 'warning' | 'error';
+  service: string;
+  message: string;
+}
+
+export interface Metrics {
+  activeOrgs: number;
+  mrr: number;
+  systemUsage: number;
+  systemHealth: number;
+}
+
+export interface SystemAlert {
+  id: string;
+  message: string;
+  severity: 'info' | 'warning' | 'error';
+  timestamp: string;
+}
+
+export interface ServiceStatus {
+  api: 'healthy' | 'degraded' | 'down';
+  websocket: 'healthy' | 'degraded' | 'down';
+  thirdParty: 'healthy' | 'degraded' | 'down';
+}
+
+export interface UsageData {
+  date: string;
+  value: number;
 }

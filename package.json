@@ -3,7 +3,11 @@
     "dev": "next dev --no-turbo"
   },
   "dependencies": {
+    "@prisma/client": "^6.4.0",
     "@types/js-cookie": "^3.0.6",
     "js-cookie": "^3.0.5"
+  },
+  "devDependencies": {
+    "prisma": "^6.4.0"
   }
 }

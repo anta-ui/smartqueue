@@ -1,9 +1,7 @@
-// services/metricsService.ts
 
+// src/services/metricsService.ts
 import axios from 'axios';
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
-
+import api from './api';
 export interface Metrics {
   activeOrgs: number;
   mrr: number;
@@ -27,13 +25,12 @@ export interface Alert {
 export interface UsageData {
   date: string;
   value: number;
-}
+};
 
-export const metricsService = {
-  // Récupérer les métriques principales
+export const MetricsService = {
   getMetrics: async (): Promise<Metrics> => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/metrics`);
+      const response = await api.get('/dashboard/stats');  // Changé
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la récupération des métriques:', error);
@@ -41,10 +38,9 @@ export const metricsService = {
     }
   },
 
-  // Récupérer le statut des services
   getServiceStatus: async (): Promise<ServiceStatus> => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/services/status`);
+      const response = await api.get('/dashboard/services/status');  // Changé
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la récupération du statut des services:', error);
@@ -52,10 +48,9 @@ export const metricsService = {
     }
   },
 
-  // Récupérer les alertes système
   getAlerts: async (): Promise<Alert[]> => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/alerts`);
+      const response = await api.get('/dashboard/alerts');  // Changé
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la récupération des alertes:', error);
@@ -63,13 +58,12 @@ export const metricsService = {
     }
   },
 
-  // Récupérer les données d'utilisation pour le graphique
-  getUsageData: async (period: 'day' | 'week' | 'month' = 'month'): Promise<UsageData[]> => {
+  getUsageData: async (): Promise<UsageData[]> => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/usage?period=${period}`);
+      const response = await api.get('/dashboard/usage-trends');  // Changé
       return response.data;
     } catch (error) {
-      console.error('Erreur lors de la récupération des données d\'utilisation:', error);
+      console.error('Erreur lors de la récupération des données d\'usage:', error);
       throw error;
     }
   }
