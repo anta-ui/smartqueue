@@ -6,8 +6,34 @@ import { Button } from '@/components/ui/button';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { AlertTriangle, Activity, Server, Shield } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import dynamic from 'next/dynamic'; 
+// Importer les nouveaux composants
 
-// Types et interfaces restent les mêmes...
+// Importation dynamique des composants
+const OrganizationMap = dynamic(
+  () => import('@/components/dashboard/OrganizationMap').then((mod) => mod.OrganizationMap),
+  {
+    ssr: false,
+    loading: () => <div>Chargement de la carte...</div>
+  }
+);
+
+const SystemLogs = dynamic(
+  () => import('@/components/dashboard/SystemLogs').then((mod) => mod.SystemLogs),
+  {
+    ssr: false,
+    loading: () => <div>Chargement des logs...</div>
+  }
+);
+
+
+// Importer les types
+import { 
+  Metrics, 
+  SystemAlert, 
+  ServiceStatus, 
+  UsageData 
+} from '@/types/dashboard';
 
 const API_URLS = {
   METRICS: '/api/metrics/',
@@ -95,37 +121,31 @@ const DashboardPage = () => {
     setLoading(true);
     setErrors({});
 
-    // Chargement des métriques
     const metricsData = await fetchWithErrorHandling(API_URLS.METRICS, 'metrics');
     if (metricsData) {
       setMetrics(metricsData);
     }
 
-    // Chargement des alertes
     const alertsData = await fetchWithErrorHandling(API_URLS.ALERTS, 'alerts');
     setAlerts(Array.isArray(alertsData) ? alertsData : []);
 
-    // Chargement du statut des services
     const statusData = await fetchWithErrorHandling(API_URLS.SERVICE_STATUS, 'status');
     if (statusData) {
       setServiceStatus(statusData);
     }
 
-    // Chargement des données d'utilisation
     const usageData = await fetchWithErrorHandling(API_URLS.USAGE, 'usage');
     setUsageData(Array.isArray(usageData) ? usageData : []);
 
     setLoading(false);
   }, [fetchWithErrorHandling]);
 
-  // Effet pour le chargement initial et périodique
   useEffect(() => {
     loadDashboardData();
     const interval = setInterval(loadDashboardData, 5 * 60 * 1000);
     return () => clearInterval(interval);
   }, [loadDashboardData]);
 
-  // Composant LoadingSpinner extrait pour éviter les hooks conditionnels
   const LoadingSpinner = () => (
     <div className="flex items-center justify-center min-h-screen">
       <div className="text-lg">Chargement...</div>
@@ -149,7 +169,6 @@ const DashboardPage = () => {
         </Button>
       </div>
 
-      {/* Affichage des erreurs */}
       {Object.entries(errors).map(([key, message]) => (
         <Alert key={key} variant="destructive">
           <AlertTriangle className="h-4 w-4" />
@@ -157,7 +176,6 @@ const DashboardPage = () => {
         </Alert>
       ))}
 
-      {/* Métriques */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { title: "Organisations Actives", value: metrics.activeOrgs },
@@ -176,7 +194,6 @@ const DashboardPage = () => {
         ))}
       </div>
 
-      {/* Graphique */}
       <Card className="p-4">
         <CardHeader>
           <h3 className="text-lg font-medium">Tendances d'Utilisation</h3>
@@ -194,9 +211,7 @@ const DashboardPage = () => {
         </CardContent>
       </Card>
 
-      {/* Services et Alertes */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Services Status */}
         <Card>
           <CardHeader>
             <h3 className="text-lg font-medium">État des Services</h3>
@@ -226,7 +241,6 @@ const DashboardPage = () => {
           </CardContent>
         </Card>
 
-        {/* Alertes */}
         <Card>
           <CardHeader>
             <h3 className="text-lg font-medium">Alertes Système</h3>
@@ -254,6 +268,12 @@ const DashboardPage = () => {
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Nouvelles sections Carte et Logs */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <OrganizationMap />
+        <SystemLogs />
       </div>
     </div>
   );

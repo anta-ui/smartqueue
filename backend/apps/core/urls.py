@@ -70,7 +70,7 @@ urlpatterns = [
     # Dashboard et API
     
     path('dashboard/organization-locations/', OrganizationLocationsView.as_view(), name='organization-locations'),
-    path('dashboard/stats', DashboardStatsView.as_view(), name='dashboard-stats'),
+    path('dashboard/stats/', DashboardStatsView.as_view(), name='dashboard-stats'),
     path('dashboard/alerts', AlertsView.as_view(), name='dashboard-alerts'),
     path('dashboard/services/status', ServiceStatusView.as_view(), name='services-status'),
     path('dashboard/usage-trends', UsageView.as_view(), name='usage-trends'),
