@@ -8,12 +8,14 @@ import {
   ChartBarIcon,
   Cog6ToothIcon,
   ArrowLeftOnRectangleIcon,
+  BuildingOfficeIcon,
 } from "@heroicons/react/24/outline";
 import { authService } from "@/services/auth";
 import { useAuthStore } from "@/hooks/auth/useAuth";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: HomeIcon },
+  { name: "Organisations", href: "/dashboard/organizations", icon: BuildingOfficeIcon },
   { name: "Queues", href: "/dashboard/queues", icon: QueueListIcon },
   { name: "Analytics", href: "/dashboard/analytics", icon: ChartBarIcon },
   { name: "Settings", href: "/dashboard/settings", icon: Cog6ToothIcon },
@@ -73,12 +75,12 @@ export default function DashboardLayout({
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
-                  {user?.firstName?.[0]}
+                  {user?.firstname?.[0]}
                 </div>
               </div>
               <div className="ml-3">
                 <p className="text-sm font-medium text-gray-700">
-                  {user?.firstName} {user?.lastName}
+                  {user?.firstname} {user?.lastname}
                 </p>
                 <p className="text-xs text-gray-500">{user?.email}</p>
               </div>

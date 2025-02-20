@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from ..models.organization import Organization
 
+
 User = get_user_model()
 
 class OrganizationMemberSerializer(serializers.ModelSerializer):
@@ -29,3 +30,25 @@ class OrganizationAddMemberSerializer(serializers.Serializer):
 class OrganizationRemoveMemberSerializer(serializers.Serializer):
     """Sérialiseur pour le retrait d'un membre d'une organisation"""
     email = serializers.EmailField()
+class OrganizationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Organization
+        fields = ['id', 'name', 'status', 'plan', 'region', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+    def validate_name(self, value):
+        """
+        Vérifier que le nom n'est pas déjà utilisé
+        """
+        if Organization.objects.filter(name=value).exists():
+            raise serializers.ValidationError("Une organisation avec ce nom existe déjà.")
+        return value
+
+    def create(self, validated_data):
+        """
+        Créer une nouvelle organisation
+        """
+        request = self.context.get('request')
+        if request and request.user:
+            validated_data['created_by'] = request.user
+        return super().create(validated_data)

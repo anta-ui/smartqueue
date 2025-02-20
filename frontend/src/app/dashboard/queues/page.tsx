@@ -3,93 +3,188 @@
 import { useEffect, useState } from 'react';
 import { queueService } from '@/services/queueService';
 import { Card, CardHeader, CardContent } from '@/components/common/Card';
-import { Button } from '@/components/common/Button';
-import { Modal } from '@/components/common/Modal';
-import { QueueDetailView } from '@/components/queues/QueueDetailView';
-import type { Queue, QueueStatus } from '@/types/queue';
+import { Button, ButtonProps } from '@/components/common/Button';
+import { Modal, ModalProps } from '@/components/common/Modal';
+import { QueueDetailView, QueueDetailViewProps } from '@/components/queues/QueueDetailView';
+
+// Définition explicite du type QueueStatus
+type QueueStatus = 'ACTIVE' | 'PAUSED' | 'CLOSED';
+
+// Définition des classes de statut
+const STATUS_CLASSES: Record<QueueStatus, string> = {
+  'ACTIVE': 'bg-green-100 text-green-800',
+  'PAUSED': 'bg-yellow-100 text-yellow-800',
+  'CLOSED': 'bg-red-100 text-red-800'
+};
+
+const STATUS_LABELS: Record<QueueStatus, string> = {
+  'ACTIVE': 'Actif',
+  'PAUSED': 'En pause',
+  'CLOSED': 'Fermé'
+};
+
+// Interface de la file d'attente
+interface Queue {
+  id: string;
+  name: string;
+  status: QueueStatus;
+  currentNumber: number;
+  currentWaitTime: number;
+}
 
 export default function QueuesPage() {
   const [queues, setQueues] = useState<Queue[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedQueue, setSelectedQueue] = useState<Queue | null>(null);
-  const [mounted, setMounted] = useState(false);
+  const [stats, setStats] = useState({
+    totalQueues: 0,
+    activeQueues: 0,
+    pausedQueues: 0,
+    averageWaitTime: 0
+  });
 
+  // Chargement initial des files d'attente
   useEffect(() => {
-    setMounted(true);
+    loadQueues();
   }, []);
 
-  useEffect(() => {
-    if (mounted) {
-      loadQueues();
-    }
-  }, [mounted]);
-
+  // Chargement des files d'attente
   const loadQueues = async () => {
     try {
       setLoading(true);
-      setError('');
+      setError(null);
       const data = await queueService.getQueues();
+      
+      // Validation et traitement des données
       if (Array.isArray(data)) {
         setQueues(data);
+        calculateStats(data);
       } else {
-        setError('Format de données invalide');
+        throw new Error('Format de données invalide');
       }
     } catch (err) {
-      console.error('Error loading queues:', err);
-      setError('Échec du chargement des files d\'attente');
+      console.error('Erreur lors du chargement des files d\'attente:', err);
+      setError('Impossible de charger les files d\'attente');
     } finally {
       setLoading(false);
     }
   };
 
+  // Calcul des statistiques
+  const calculateStats = (queueData: Queue[]) => {
+    const totalQueues = queueData.length;
+    const activeQueues = queueData.filter(q => q.status === 'ACTIVE').length;
+    const pausedQueues = queueData.filter(q => q.status === 'PAUSED').length;
+    const averageWaitTime = totalQueues > 0 
+      ? queueData.reduce((sum, q) => sum + q.currentWaitTime, 0) / totalQueues
+      : 0;
+
+    setStats({
+      totalQueues,
+      activeQueues,
+      pausedQueues,
+      averageWaitTime: Math.round(averageWaitTime)
+    });
+  };
+
+  // Gestion du changement de statut
   const handleStatusChange = async (queueId: string, status: QueueStatus) => {
     try {
       await queueService.updateQueueStatus(queueId, status);
-      loadQueues();
+      await loadQueues(); // Rechargement pour mise à jour
     } catch (err) {
-      setError('Échec de la mise à jour du statut');
+      setError('Impossible de mettre à jour le statut de la file d\'attente');
     }
   };
 
-  if (!mounted) {
-    return null;
-  }
+  // Rendu de la barre de statut
+  const renderQueueStatusBadge = (status: QueueStatus) => (
+    <span className={`px-2 py-1 text-sm rounded-full ${STATUS_CLASSES[status]}`}>
+      {STATUS_LABELS[status]}
+    </span>
+  );
 
+  // Rendu des statistiques globales
+  const renderGlobalStats = () => (
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <Card>
+        <CardContent className="flex items-center justify-between">
+          <div>
+            <p className="text-sm text-gray-500">Total Files</p>
+            <p className="text-2xl font-bold">{stats.totalQueues}</p>
+          </div>
+          <i className="ri-list-check text-blue-500 text-3xl"></i>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardContent className="flex items-center justify-between">
+          <div>
+            <p className="text-sm text-gray-500">Files Actives</p>
+            <p className="text-2xl font-bold text-green-600">{stats.activeQueues}</p>
+          </div>
+          <i className="ri-play-line text-green-500 text-3xl"></i>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardContent className="flex items-center justify-between">
+          <div>
+            <p className="text-sm text-gray-500">Files en Pause</p>
+            <p className="text-2xl font-bold text-yellow-600">{stats.pausedQueues}</p>
+          </div>
+          <i className="ri-pause-line text-yellow-500 text-3xl"></i>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardContent className="flex items-center justify-between">
+          <div>
+            <p className="text-sm text-gray-500">Temps Attente Moyen</p>
+            <p className="text-2xl font-bold text-blue-600">{stats.averageWaitTime} min</p>
+          </div>
+          <i className="ri-time-line text-blue-500 text-3xl"></i>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
+  // Gestion des états de chargement et d'erreur
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen p-4">
-        <div className="text-lg">Chargement...</div>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-4">
-        <div className="bg-red-50 p-4 rounded-md">
-          <p className="text-red-700">{error}</p>
-          <Button onClick={loadQueues} className="mt-4">
-            Réessayer
-          </Button>
-        </div>
+      <div className="p-4 text-center">
+        <p className="text-red-500 mb-4">{error}</p>
+        <Button variant="destructive" onClick={loadQueues}>Réessayer</Button>
       </div>
     );
   }
 
   return (
-    <div className="p-4">
-      <div className="flex justify-between items-center mb-6">
+    <div className="p-4 space-y-6">
+      <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold text-gray-900">
           Gestion des Files d'Attente
         </h1>
-        <Button onClick={() => setSelectedQueue({} as Queue)}>
+        <Button 
+          variant="primary" 
+          onClick={() => setSelectedQueue({} as Queue)}
+        >
           Nouvelle File d'Attente
         </Button>
       </div>
 
+      {/* Statistiques globales */}
+      {renderGlobalStats()}
+
+      {/* Liste des files d'attente */}
       {queues.length === 0 ? (
-        <div className="text-center py-8">
+        <div className="text-center py-8 bg-gray-50 rounded-lg">
           <p className="text-gray-500">Aucune file d'attente disponible</p>
         </div>
       ) : (
@@ -97,21 +192,13 @@ export default function QueuesPage() {
           {queues.map((queue) => (
             <Card
               key={queue.id}
+              className="hover:shadow-lg transition-all duration-300 cursor-pointer"
               onClick={() => setSelectedQueue(queue)}
-              className="cursor-pointer hover:shadow-lg transition-shadow"
             >
               <CardHeader>
                 <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-medium">{queue.name}</h3>
-                  <span className={`px-2 py-1 text-sm rounded-full ${
-                    queue.status === 'AC' ? 'bg-green-100 text-green-800' :
-                    queue.status === 'PA' ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-red-100 text-red-800'
-                  }`}>
-                    {queue.status === 'AC' ? 'Actif' :
-                     queue.status === 'PA' ? 'En pause' :
-                     'Fermé'}
-                  </span>
+                  <h3 className="text-lg font-medium truncate">{queue.name}</h3>
+                  {renderQueueStatusBadge(queue.status)}
                 </div>
               </CardHeader>
               <CardContent>
@@ -119,12 +206,14 @@ export default function QueuesPage() {
                   <div className="flex justify-between items-center">
                     <span className="text-gray-500">Numéro Actuel</span>
                     <span className="text-xl font-semibold">
-                      {queue.current_number}
+                      {queue.currentNumber}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-500">Temps d'Attente</span>
-                    <span>{queue.current_wait_time} min</span>
+                    <span className="font-medium">
+                      {queue.currentWaitTime} min
+                    </span>
                   </div>
                   <div className="grid grid-cols-2 gap-2 mt-4">
                     <Button
@@ -132,24 +221,24 @@ export default function QueuesPage() {
                       size="sm"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleStatusChange(queue.id.toString(), 'PA');
+                        handleStatusChange(queue.id, 'PAUSED');
                       }}
-                      disabled={queue.status === 'PA'}
+                      disabled={queue.status === 'PAUSED'}
                     >
                       Pause
                     </Button>
                     <Button
-                      variant={queue.status === 'AC' ? 'danger' : 'primary'}
+                      variant={queue.status === 'ACTIVE' ? 'destructive' : 'primary'}
                       size="sm"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleStatusChange(
-                          queue.id.toString(),
-                          queue.status === 'AC' ? 'CL' : 'AC'
+                          queue.id, 
+                          queue.status === 'ACTIVE' ? 'CLOSED' : 'ACTIVE'
                         );
                       }}
                     >
-                      {queue.status === 'AC' ? 'Fermer' : 'Activer'}
+                      {queue.status === 'ACTIVE' ? 'Fermer' : 'Activer'}
                     </Button>
                   </div>
                 </div>
@@ -159,15 +248,15 @@ export default function QueuesPage() {
         </div>
       )}
 
+      {/* Modal de détail de file d'attente */}
       {selectedQueue && (
         <Modal
-          isOpen={!!selectedQueue}
+          isOpen={true}
           onClose={() => setSelectedQueue(null)}
-          className="max-w-4xl"
         >
           <QueueDetailView
             queue={selectedQueue}
-            onStatusChange={(status) => handleStatusChange(selectedQueue.id.toString(), status)}
+            onStatusChange={(status: QueueStatus) => handleStatusChange(selectedQueue.id, status)}
             onClose={() => setSelectedQueue(null)}
           />
         </Modal>

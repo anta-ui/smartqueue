@@ -7,7 +7,8 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { AlertTriangle, Activity, Server, Shield } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import dynamic from 'next/dynamic'; 
-// Importer les nouveaux composants
+import Link from "next/link";
+import { BuildingOffice2Icon, QueueListIcon, ChartBarIcon } from "@heroicons/react/24/outline";
 
 // Importation dynamique des composants
 const OrganizationMap = dynamic(
@@ -26,8 +27,7 @@ const SystemLogs = dynamic(
   }
 );
 
-
-// Importer les types
+// Types
 import { 
   Metrics, 
   SystemAlert, 
@@ -88,18 +88,11 @@ const DashboardPage = () => {
         credentials: 'include'
       });
 
-      if (response.status === 404) {
-        handleError(key, `L'endpoint ${url} n'existe pas`);
-        return null;
-      }
-
-      if (response.status === 401) {
-        handleError(key, 'Session expirée');
-        return null;
-      }
-
       if (!response.ok) {
-        handleError(key, `Erreur serveur: ${response.status}`);
+        const errorMessage = response.status === 404 ? `L'endpoint ${url} n'existe pas` :
+                           response.status === 401 ? 'Session expirée' :
+                           `Erreur serveur: ${response.status}`;
+        handleError(key, errorMessage);
         return null;
       }
 
@@ -109,8 +102,7 @@ const DashboardPage = () => {
         return null;
       }
 
-      const data = await response.json();
-      return data;
+      return await response.json();
     } catch (error) {
       handleError(key, 'Erreur de connexion');
       return null;
@@ -121,20 +113,16 @@ const DashboardPage = () => {
     setLoading(true);
     setErrors({});
 
-    const metricsData = await fetchWithErrorHandling(API_URLS.METRICS, 'metrics');
-    if (metricsData) {
-      setMetrics(metricsData);
-    }
+    const [metricsData, alertsData, statusData, usageData] = await Promise.all([
+      fetchWithErrorHandling(API_URLS.METRICS, 'metrics'),
+      fetchWithErrorHandling(API_URLS.ALERTS, 'alerts'),
+      fetchWithErrorHandling(API_URLS.SERVICE_STATUS, 'status'),
+      fetchWithErrorHandling(API_URLS.USAGE, 'usage')
+    ]);
 
-    const alertsData = await fetchWithErrorHandling(API_URLS.ALERTS, 'alerts');
+    if (metricsData) setMetrics(metricsData);
     setAlerts(Array.isArray(alertsData) ? alertsData : []);
-
-    const statusData = await fetchWithErrorHandling(API_URLS.SERVICE_STATUS, 'status');
-    if (statusData) {
-      setServiceStatus(statusData);
-    }
-
-    const usageData = await fetchWithErrorHandling(API_URLS.USAGE, 'usage');
+    if (statusData) setServiceStatus(statusData);
     setUsageData(Array.isArray(usageData) ? usageData : []);
 
     setLoading(false);
@@ -146,18 +134,17 @@ const DashboardPage = () => {
     return () => clearInterval(interval);
   }, [loadDashboardData]);
 
-  const LoadingSpinner = () => (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="text-lg">Chargement...</div>
-    </div>
-  );
-
   if (loading) {
-    return <LoadingSpinner />;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Chargement...</div>
+      </div>
+    );
   }
 
   return (
     <div className="p-6 space-y-6">
+      {/* En-tête du tableau de bord */}
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Tableau de Bord</h1>
         <Button 
@@ -169,13 +156,58 @@ const DashboardPage = () => {
         </Button>
       </div>
 
-      {Object.entries(errors).map(([key, message]) => (
-        <Alert key={key} variant="destructive">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>{message}</AlertDescription>
-        </Alert>
-      ))}
+      {/* Messages d'erreur */}
+      {Object.entries(errors).length > 0 && (
+        <div className="space-y-2">
+          {Object.entries(errors).map(([key, message]) => (
+            <Alert key={key} variant="destructive">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription>{message}</AlertDescription>
+            </Alert>
+          ))}
+        </div>
+      )}
 
+      {/* Navigation rapide */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <Link href="/dashboard/organizations">
+          <div className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow cursor-pointer">
+            <div className="p-6">
+              <div className="flex items-center text-lg font-semibold mb-2">
+                <BuildingOffice2Icon className="h-6 w-6 mr-2" />
+                Organisations
+              </div>
+              <p className="text-gray-600">Gérer vos organisations</p>
+            </div>
+          </div>
+        </Link>
+
+        <Link href="/dashboard/queues">
+          <div className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow cursor-pointer">
+            <div className="p-6">
+              <div className="flex items-center text-lg font-semibold mb-2">
+                <QueueListIcon className="h-6 w-6 mr-2" />
+                Files d'attente
+              </div>
+              <p className="text-gray-600">Gérer vos files d'attente</p>
+            </div>
+          </div>
+        </Link>
+
+        <Link href="/dashboard/analytics">
+          <div className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow cursor-pointer">
+            <div className="p-6">
+              <div className="flex items-center text-lg font-semibold mb-2">
+                <ChartBarIcon className="h-6 w-6 mr-2" />
+                Analytiques
+              </div>
+              <p className="text-gray-600">Voir vos statistiques</p>
+            </div>
+          </div>
+        </Link>
+      </div>
+
+      {/* Métriques */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { title: "Organisations Actives", value: metrics.activeOrgs },
@@ -194,6 +226,7 @@ const DashboardPage = () => {
         ))}
       </div>
 
+      {/* Graphique d'utilisation */}
       <Card className="p-4">
         <CardHeader>
           <h3 className="text-lg font-medium">Tendances d'Utilisation</h3>
@@ -211,6 +244,7 @@ const DashboardPage = () => {
         </CardContent>
       </Card>
 
+      {/* État des services et alertes */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card>
           <CardHeader>
@@ -270,7 +304,7 @@ const DashboardPage = () => {
         </Card>
       </div>
 
-      {/* Nouvelles sections Carte et Logs */}
+      {/* Carte et logs */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <OrganizationMap />
         <SystemLogs />

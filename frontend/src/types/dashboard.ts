@@ -214,6 +214,7 @@ export interface Metrics {
   mrr: number;
   systemUsage: number;
   systemHealth: number;
+  
 }
 
 export interface SystemAlert {
@@ -221,6 +222,7 @@ export interface SystemAlert {
   message: string;
   severity: 'info' | 'warning' | 'error';
   timestamp: string;
+  type: 'security' | 'performance' | 'other';
 }
 
 export interface ServiceStatus {

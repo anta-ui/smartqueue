@@ -14,7 +14,9 @@ from .views.auth import (
 from .views.organization import (
     OrganizationMemberListView,
     OrganizationAddMemberView,
-    OrganizationRemoveMemberView
+    OrganizationRemoveMemberView,
+    OrganizationCreateView,
+    OrganizationDetailView,
 )
 from .views.dashboard import (  # Nouveau import
     ServiceStatusView,
@@ -62,6 +64,10 @@ urlpatterns = [
     path('organization/members/add/', OrganizationAddMemberView.as_view(), name='organization-add-member'),
     path('organization/members/remove/', OrganizationRemoveMemberView.as_view(), name='organization-remove-member'),
     
+    
+    # Nouvelles routes
+    path('organization/new/', OrganizationCreateView.as_view(), name='organization-create'),
+    path('organization/<int:pk>/', OrganizationDetailView.as_view(), name='organization-detail'),
     # Consent
     path('consent/', UserConsentListView.as_view(), name='consent-list'),
     path('consent/create/', UserConsentCreateView.as_view(), name='consent-create'),

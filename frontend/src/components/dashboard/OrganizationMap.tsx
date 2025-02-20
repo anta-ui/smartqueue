@@ -74,6 +74,7 @@ const MapWrapper: React.FC<{ organizations: OrganizationLocation[] }> = ({ organ
 export const OrganizationMap: React.FC = () => {
   const [organizations, setOrganizations] = useState<OrganizationLocation[]>([]);
   const [isClient, setIsClient] = useState(false);
+  
 
   useEffect(() => {
     setIsClient(true);
