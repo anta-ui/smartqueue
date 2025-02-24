@@ -51,3 +51,11 @@ class MFAMiddleware:
             if isinstance(device, TOTPDevice):
                 return device
         return None
+# apps/core/authentication.py
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.authentication import SessionAuthentication
+
+class CustomSessionAuthentication(SessionAuthentication):
+    def enforce_csrf(self, request):
+        # Désactive la vérification CSRF
+        return

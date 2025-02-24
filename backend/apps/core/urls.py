@@ -11,13 +11,7 @@ from .views.auth import (
     SecurityKeyViewSet,
     LogoutView
 )
-from .views.organization import (
-    OrganizationMemberListView,
-    OrganizationAddMemberView,
-    OrganizationRemoveMemberView,
-    OrganizationCreateView,
-    OrganizationDetailView,
-)
+
 from .views.dashboard import (  # Nouveau import
     ServiceStatusView,
     MetricsView,
@@ -33,6 +27,7 @@ from .views.consent import (
     UserConsentBulkUpdateView,
     UserConsentListView
 )
+from apps.core.views.organization import OrganizationViewSet  
 
 
 app_name = 'core'
@@ -40,6 +35,9 @@ app_name = 'core'
 router = DefaultRouter()
 router.register(r'security-keys', SecurityKeyViewSet, basename='security_key')
 
+router.register(r'organizations', OrganizationViewSet, basename='organizations')
+
+print("Routes disponibles:", [str(url) for url in router.urls])
 urlpatterns = [
     # Authentication
     path('auth/register/', UserRegistrationView.as_view(), name='register'),
@@ -59,15 +57,7 @@ urlpatterns = [
     path('auth/biometric/register/', BiometricRegistrationView.as_view(), name='biometric_register'),
     path('auth/biometric/verify/', BiometricVerificationView.as_view(), name='biometric_verify'),
     
-    # Organization
-    path('organization/members/', OrganizationMemberListView.as_view(), name='organization-members'),
-    path('organization/members/add/', OrganizationAddMemberView.as_view(), name='organization-add-member'),
-    path('organization/members/remove/', OrganizationRemoveMemberView.as_view(), name='organization-remove-member'),
     
-    
-    # Nouvelles routes
-    path('organization/new/', OrganizationCreateView.as_view(), name='organization-create'),
-    path('organization/<int:pk>/', OrganizationDetailView.as_view(), name='organization-detail'),
     # Consent
     path('consent/', UserConsentListView.as_view(), name='consent-list'),
     path('consent/create/', UserConsentCreateView.as_view(), name='consent-create'),

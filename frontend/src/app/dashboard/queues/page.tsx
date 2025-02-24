@@ -48,6 +48,7 @@ interface Queue {
 export default function QueuesPage() {
   // États
   const [queues, setQueues] = useState<Queue[]>([]);
+  const [queueTypes, setQueueTypes] = useState<Queue[]>([]);
   const [filteredQueues, setFilteredQueues] = useState<Queue[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -85,15 +86,29 @@ export default function QueuesPage() {
   const loadQueues = async () => {
     try {
       setLoading(true);
-      const data = await queueService.getQueues();
-      setQueues(data);
+      const response = await queueService.getQueues();
+      console.log('Réponse API complète:', response);
+      
+      let queuesData = [];
+      if (Array.isArray(response)) {
+        queuesData = response;
+      } else if (typeof response === 'object' && response !== null) {
+        // Si la réponse est un objet, essayez de trouver un tableau à l'intérieur
+        const possibleArrays = Object.values(response).filter(Array.isArray);
+        if (possibleArrays.length > 0) {
+          queuesData = possibleArrays[0];
+        }
+      }
+      
+      console.log('Données des files d\'attente:', queuesData);
+      setQueues(queuesData);
+      
+      if (queuesData.length === 0) {
+        console.warn('Aucune file d\'attente trouvée');
+      }
     } catch (err) {
       setError('Impossible de charger les files d\'attente');
-      toast({
-        title: 'Erreur',
-        description: 'Impossible de charger les files d\'attente',
-        variant: 'destructive'
-      });
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -136,9 +151,25 @@ export default function QueuesPage() {
       });
     }
   };
-
+  const loadQueueTypes = async () => {
+    try {
+      const types = await queueService.getQueueTypes();
+      console.log("Types de files reçus:", types);
+      setQueueTypes(types);
+    } catch (error) {
+      console.error("Erreur lors du chargement des types de files d'attente", error.response || error);
+    }
+  };
   // Statistiques
   const queueStats = useMemo(() => {
+    if (!Array.isArray(queues)) {
+      return {
+        total: 0,
+        active: 0,
+        paused: 0,
+        closed: 0,
+      };
+    }
     return {
       total: queues.length,
       active: queues.filter(q => q.status === 'ACTIVE').length,

@@ -8,10 +8,13 @@ export default {
   ],
   theme: {
     extend: {
+      'custom-background': "url('/images/back2.jpg')",
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        
       },
+      
     },
   },
   plugins: [],

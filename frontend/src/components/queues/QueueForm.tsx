@@ -1,11 +1,15 @@
-// src/components/queue/QueueForm.tsx
 'use client';
-
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select } from '@/components/ui/select';
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from '@/components/ui/select';
 import { QueueCreateUpdateData, Queue } from '@/types/queue';
 
 interface QueueFormProps {
@@ -15,11 +19,11 @@ interface QueueFormProps {
   onClose: () => void;
 }
 
-export function QueueForm({ 
-  queue, 
-  queueTypes, 
-  onSubmit, 
-  onClose 
+export function QueueForm({
+  queue,
+  queueTypes,
+  onSubmit,
+  onClose
 }: QueueFormProps) {
   const { control, handleSubmit, reset } = useForm<QueueCreateUpdateData>({
     defaultValues: queue ? {
@@ -28,7 +32,9 @@ export function QueueForm({
       status: queue.status,
       current_number: queue.current_number,
       current_wait_time: queue.current_wait_time,
-    } : {}
+    } : {
+      status: 'AC', // valeur par défaut
+    }
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -39,7 +45,7 @@ export function QueueForm({
       await onSubmit(data);
       reset();
     } catch (error) {
-      // Gérer les erreurs
+      console.error('Erreur lors de la soumission:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -58,8 +64,8 @@ export function QueueForm({
         render={({ field, fieldState }) => (
           <div>
             <label>Nom de la File d'Attente</label>
-            <Input 
-              {...field} 
+            <Input
+              {...field}
               placeholder="Nom de la file d'attente"
             />
             {fieldState.error && (
@@ -73,34 +79,41 @@ export function QueueForm({
         name="queue_type"
         control={control}
         rules={{ required: 'Le type de file est requis' }}
-        render={({ field, fieldState }) => (
+        render={({ field }) => (
           <div>
             <label>Type de File</label>
             <Select
-              {...field}
-              options={queueTypes.map(type => ({
-                value: type.id,
-                label: type.name
-              }))}
-              placeholder="Sélectionner un type de file"
-            />
-            {fieldState.error && (
-              <p className="text-red-500">{fieldState.error.message}</p>
-            )}
+              value={field.value}
+              onValueChange={field.onChange}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Sélectionner un type de file" />
+              </SelectTrigger>
+              <SelectContent>
+                {queueTypes.map(type => (
+                  <SelectItem 
+                    key={type.id} 
+                    value={type.id}
+                  >
+                    {type.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         )}
       />
 
       <div className="flex justify-end space-x-2">
-        <Button 
-          type="button" 
-          variant="secondary" 
+        <Button
+          type="button"
+          variant="secondary"
           onClick={onClose}
         >
           Annuler
         </Button>
-        <Button 
-          type="submit" 
+        <Button
+          type="submit"
           disabled={isSubmitting}
         >
           {queue ? 'Mettre à jour' : 'Créer'}

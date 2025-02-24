@@ -1,6 +1,19 @@
-import { NextResponse } from 'next/server';
+import { NextResponse,NextRequest } from 'next/server';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const organizations = [
+    {
+      id: '1',
+      name: 'Organisation 1',
+      status: 'active',
+      plan: 'Standard',
+      memberCount: 10,
+      createdAt: new Date().toISOString()
+    },
+  ];
+  
+
+
   const organizationLocations = [
     {
       id: '1',
@@ -43,6 +56,6 @@ export async function GET() {
       status: 'degraded'
     }
   ];
-
+  return NextResponse.json(organizations);
   return NextResponse.json(organizationLocations);
 }

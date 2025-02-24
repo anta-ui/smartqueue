@@ -2,7 +2,7 @@
 import { api } from '@/services/api';
 
 // Types
-export type QueueStatus = 'ACTIVE' | 'PAUSED' | 'CLOSED';
+export type QueueStatus = 'AC' | 'PA' | 'CL' | 'MA'; 
 
 // Interface pour la création/mise à jour d'une file d'attente
 interface QueueCreateUpdateData {
@@ -15,8 +15,27 @@ interface QueueCreateUpdateData {
   service_points?: string[];
   is_priority?: boolean;
 }
+export interface QueueType {
+  id: string;
+  name: string;
+  category: 'VE' | 'PE' | 'MI';
+}
 
+export interface QueueCreateData {
+  name: string;
+  queue_type: string;
+  status: QueueStatus;
+  current_number?: number;
+  current_wait_time?: number;
+  is_priority?: boolean;
+}
 
+const statusMapping = {
+  'ACTIVE': 'AC',
+  'PAUSED': 'PA',
+  'CLOSED': 'CL',
+  'MAINTENANCE': 'MA'
+} as const;
 export interface Queue {
   id: string;
   name: string;
@@ -25,41 +44,56 @@ export interface Queue {
   current_wait_time?: number;
 }
 
-export interface QueueCreateData {
-  name: string;
-  status?: QueueStatus;
-  current_number?: number;
-  current_wait_time?: number;
-}
+
 
 export const queueService = {
   // Créer une nouvelle file d'attente
-  createQueue: async (data: QueueCreateData): Promise<Queue> => {
+  getQueueTypes: async (): Promise<QueueType[]> => {
     try {
-      const response = await api.post('/queues/queues/', data);
+      console.log('Envoi de la requête vers /queues/queue-types/');
+      const response = await api.get('/queues/queue-types/');
+      
+      console.log('Réponse reçue:', response);
+      console.log('Données:', response.data);
+      
+      if (Array.isArray(response.data) && response.data.length === 0) {
+        console.warn('La réponse est un tableau vide');
+      }
+      
       return response.data;
     } catch (error) {
-      console.error('Erreur lors de la création de la file d\'attente:', error);
+      console.error('Erreur lors de la récupération des types de files:', error);
       throw error;
     }
+  },
+  createQueue: async (data: QueueCreateData) => {
+    const response = await api.post('/queues/', data);
+    return response.data;
   },
   /**
    * Récupère toutes les files d'attente
    * @returns Promise<Queue[]>
    */
 
-  updateQueueStatus: async (id: string, status: QueueStatus): Promise<Queue> => {
+  updateQueueStatus: async (id: string, status: string): Promise<Queue> => {
     try {
-      const response = await api.post(`/queues/queues/${id}/update_status/`, { status });
+      // Convertir le statut avant l'envoi
+      const mappedStatus = statusMapping[status as keyof typeof statusMapping] || status;
+      console.log('Envoi du statut mappé:', mappedStatus);
+      
+      const response = await api.post(`/queues/queues/${id}/update_status/`, { 
+        status: mappedStatus 
+      });
       return response.data;
-    } catch (error) {
-      console.error(`Erreur lors de la mise à jour du statut de la file d'attente ${id}:`, error);
+    } catch (error: any) {
+      console.error('Données envoyées:', { status: mappedStatus });
+      console.error('Erreur complète:', error.response?.data);
       throw error;
     }
   },
   getQueues: async (): Promise<Queue[]> => {
     try {
-      const response = await api.get('/queues/queues/');
+      const response = await api.get('/queues/');
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la récupération des files d\'attente:', error);
@@ -87,15 +121,7 @@ export const queueService = {
    * @param queueData Données de la nouvelle file d'attente
    * @returns Promise<Queue>
    */
-  createQueue: async (queueData: QueueCreateUpdateData): Promise<Queue> => {
-    try {
-      const response = await api.post('/queues/queues/', queueData);
-      return response.data;
-    } catch (error) {
-      console.error('Erreur lors de la création de la file d\'attente:', error);
-      throw error;
-    }
-  },
+  
 
   /**
    * Met à jour une file d'attente existante
@@ -140,20 +166,11 @@ export const queueService = {
    * Récupère les types de files d'attente disponibles
    * @returns Promise<QueueType[]>
    */
-  getQueueTypes: async () => {
-    try {
-      const response = await api.get('/queues/queue-types/');
-      return response.data;
-    } catch (error) {
-      console.error('Erreur lors de la récupération des types de files d\'attente:', error);
-      throw error;
-    }
-  }
+  
 };
 
 // Export des types pour une utilisation cohérente
 export type { 
-  Queue, 
-  QueueStatus, 
+  
   QueueCreateUpdateData 
 };

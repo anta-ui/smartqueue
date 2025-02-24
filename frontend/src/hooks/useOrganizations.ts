@@ -1,16 +1,17 @@
 // src/hooks/useOrganizations.ts
-import { useState, useEffect } from "react";
-import { api } from "@/services/api";
+import { useState, useEffect } from 'react';
+import { organizationService } from '@/services/api/organizationService';
 
 export interface Organization {
   id: string;
   name: string;
-  status: "active" | "inactive" | "suspended";
+  status: 'active' | 'inactive' | 'pending';
+  plan: 'free' | 'basic' | 'premium';
+  region: 'north' | 'south' | 'east' | 'west' | 'central';
+  createdAt?: string;
   memberCount?: number;
-  plan?: string;
 }
-
-export const useOrganizations = () => {
+export function useOrganizations() {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -18,42 +19,33 @@ export const useOrganizations = () => {
   const fetchOrganizations = async () => {
     try {
       setLoading(true);
-      const response = await api.get("/organization/members/");
-      setOrganizations(response.data);
+      const data = await organizationService.getAll();
+      setOrganizations(data);
       setError(null);
-    } catch (err) {
-      console.error("Erreur lors du chargement des organisations:", err);
-      setError("Impossible de charger les organisations");
+    } catch (err: any) {
+      console.error('Erreur lors de la récupération des organisations:', err);
+      setError(err.message || 'Impossible de charger les organisations');
+      setOrganizations([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const addMember = async (organizationId: string, email: string, userType: string) => {
+  const deleteOrganization = async (orgId: string) => {
     try {
-      await api.post(`/organization/members/add/`, {
-        email,
-        user_type: userType,
-      });
-      await fetchOrganizations(); // Rafraîchir la liste
-      return true;
-    } catch (err) {
-      console.error("Erreur lors de l'ajout du membre:", err);
-      throw err;
+      await organizationService.delete(orgId);
+      // Mettre à jour la liste locale des organisations
+      setOrganizations(orgs => orgs.filter(org => org.id !== orgId));
+    } catch (err: any) {
+      const errorMsg = err instanceof Error
+        ? err.message
+        : 'Impossible de supprimer l\'organisation';
+      throw new Error(errorMsg);
     }
   };
 
-  const removeMember = async (organizationId: string, email: string) => {
-    try {
-      await api.post(`/organization/members/remove/`, {
-        email,
-      });
-      await fetchOrganizations(); // Rafraîchir la liste
-      return true;
-    } catch (err) {
-      console.error("Erreur lors de la suppression du membre:", err);
-      throw err;
-    }
+  const refresh = () => {
+    return fetchOrganizations();
   };
 
   useEffect(() => {
@@ -64,8 +56,7 @@ export const useOrganizations = () => {
     organizations,
     loading,
     error,
-    addMember,
-    removeMember,
-    refresh: fetchOrganizations,
+    refresh,
+    deleteOrganization
   };
-};
+}
