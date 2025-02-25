@@ -1,160 +1,95 @@
+// src/app/dashboard/organizations/[id]/page.jsx
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
 import { organizationService } from '@/services/api/organizationService';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { OrganizationForm } from '@/components/organizations/OrganizationForm';
-import { 
-  AlertDialog, 
-  AlertDialogAction, 
-  AlertDialogCancel, 
-  AlertDialogContent, 
-  AlertDialogDescription, 
-  AlertDialogHeader, 
-  AlertDialogTitle, 
-  AlertDialogTrigger 
-} from '@/components/ui/alert-dialog';
-import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/components/ui/use-toast';
-import { useOrganizations } from '@/hooks/useOrganizations';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { BranchesList } from '@/components/organizations/BranchesList';
 
-export default function OrganizationsPage() {
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [orgToDelete, setOrgToDelete] = useState<string | null>(null);
-  const { organizations, loading, error, deleteOrganization, refresh } = useOrganizations();
-  const { toast } = useToast();
+export default function OrganizationDetailPage() {
+  const { id } = useParams();
+  const [organization, setOrganization] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const handleCreateSuccess = () => {
-    refresh(); // Rechargez la liste après création
-    setIsFormOpen(false);
-  };
+  useEffect(() => {
+    const fetchOrganization = async () => {
+      try {
+        setLoading(true);
+        const data = await organizationService.getById(id);
+        setOrganization(data);
+      } catch (err) {
+        setError('Impossible de charger les détails de l\'organisation');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleDeleteOrganization = async () => {
-    if (!orgToDelete) return;
-
-    try {
-      await deleteOrganization(orgToDelete);
-      toast({
-        title: "Succès",
-        description: "Organisation supprimée avec succès",
-        variant: "default"
-      });
-    } catch (error) {
-      toast({
-        title: "Erreur",
-        description: "Impossible de supprimer l'organisation",
-        variant: "destructive"
-      });
+    if (id) {
+      fetchOrganization();
     }
-  };
+  }, [id]);
 
-  if (loading) return <div className="p-6">Chargement...</div>;
+  if (loading) {
+    return <div className="p-6 text-center">Chargement...</div>;
+  }
 
-  if (error) return (
-    <div className="p-6">
-      <Card className="bg-red-50">
-        <CardContent className="py-4">
-          <div className="text-red-600 text-center">{error}</div>
-        </CardContent>
-      </Card>
-    </div>
-  );
+  if (error) {
+    return <div className="p-6 text-center text-red-500">{error}</div>;
+  }
 
   return (
-    <div className="p-6 space-y-4">
+    <div className="p-6 space-y-6">
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Organisations</CardTitle>
-          <Button onClick={() => setIsFormOpen(!isFormOpen)}>
-            {isFormOpen ? 'Annuler' : 'Nouvelle Organisation'}
-          </Button>
+        <CardHeader>
+          <CardTitle>{organization?.name || 'Détails de l\'organisation'}</CardTitle>
         </CardHeader>
-        
-        {isFormOpen && (
-          <CardContent>
-            <OrganizationForm
-              onClose={() => setIsFormOpen(false)}
-              onSuccess={handleCreateSuccess}
-            />
-          </CardContent>
-        )}
-        
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nom</TableHead>
-                <TableHead>Plan</TableHead>
-                <TableHead>Statut</TableHead>
-                <TableHead>Région</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {organizations.map((org) => (
-                <TableRow key={org.id}>
-                  <TableCell>{org.name}</TableCell>
-                  <TableCell>{org.plan}</TableCell>
-                  <TableCell>
-                    <Badge 
-                      variant={
-                        org.status === 'active' ? 'default' :
-                        org.status === 'inactive' ? 'secondary' :
-                        'destructive'
-                      }
-                    >
-                      {org.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{org.region}</TableCell>
-                  <TableCell className="space-x-2">
-                    <Link 
-                      href={`/dashboard/organizations/${org.id}/edit`}
-                      className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-3 py-2"
-                    >
-                      Modifier
-                    </Link>
-                    
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button 
-                          variant="destructive" 
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setOrgToDelete(org.id);
-                          }}
-                        >
-                          Supprimer
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Cette action va supprimer définitivement l'organisation "{org.name}". 
-                            Cette action ne peut pas être annulée.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Annuler</AlertDialogCancel>
-                          <AlertDialogAction 
-                            onClick={handleDeleteOrganization}
-                            className="bg-red-600 hover:bg-red-700"
-                          >
-                            Supprimer
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <Tabs defaultValue="details">
+            <TabsList>
+              <TabsTrigger value="details">Détails</TabsTrigger>
+              <TabsTrigger value="branches">Branches</TabsTrigger>
+              <TabsTrigger value="members">Membres</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="details">
+              {/* Détails de l'organisation */}
+              <div className="grid grid-cols-2 gap-4 mt-4">
+                <div>
+                  <p className="text-sm font-medium">Plan</p>
+                  <p>{organization?.plan || '-'}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Statut</p>
+                  <p>{organization?.status || '-'}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Région</p>
+                  <p>{organization?.region || '-'}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Date de création</p>
+                  <p>{organization?.created_at 
+                      ? new Date(organization.created_at).toLocaleDateString() 
+                      : '-'}</p>
+                </div>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="branches">
+              {/* Liste des branches */}
+              <BranchesList organizationId={id} />
+            </TabsContent>
+            
+            <TabsContent value="members">
+              {/* Liste des membres - à implémenter plus tard */}
+              <div className="p-4 text-center text-gray-500">
+                La gestion des membres sera bientôt disponible.
+              </div>
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
     </div>

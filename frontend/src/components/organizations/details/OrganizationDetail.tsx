@@ -12,10 +12,11 @@ import UsageAnalysis from './UsageAnalysis';
 import FinancialManagement from './FinancialManagement';
 
 export default function OrganizationDetail() {
+  const { id: organizationId } = useParams();
   const params = useParams();
   const router = useRouter();
   const { toast } = useToast();
-  const organizationId = params?.id as string;
+  
   const { organization, loading, error, mutate } = useOrganization(organizationId);
   
   const handleEdit = () => {

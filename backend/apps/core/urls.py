@@ -11,8 +11,7 @@ from .views.auth import (
     SecurityKeyViewSet,
     LogoutView
 )
-
-from .views.dashboard import (  # Nouveau import
+from .views.dashboard import (
     ServiceStatusView,
     MetricsView,
     UsageView
@@ -27,17 +26,17 @@ from .views.consent import (
     UserConsentBulkUpdateView,
     UserConsentListView
 )
-from apps.core.views.organization import OrganizationViewSet  
+from apps.core.views.organization import OrganizationViewSet
+from apps.core.views.organization_branch import OrganizationBranchViewSet
 
 
 app_name = 'core'
-
 router = DefaultRouter()
 router.register(r'security-keys', SecurityKeyViewSet, basename='security_key')
-
 router.register(r'organizations', OrganizationViewSet, basename='organizations')
+router.register(r'organization-branches', OrganizationBranchViewSet, basename='organizationbranch')
 
-print("Routes disponibles:", [str(url) for url in router.urls])
+
 urlpatterns = [
     # Authentication
     path('auth/register/', UserRegistrationView.as_view(), name='register'),
@@ -57,20 +56,19 @@ urlpatterns = [
     path('auth/biometric/register/', BiometricRegistrationView.as_view(), name='biometric_register'),
     path('auth/biometric/verify/', BiometricVerificationView.as_view(), name='biometric_verify'),
     
-    
     # Consent
     path('consent/', UserConsentListView.as_view(), name='consent-list'),
     path('consent/create/', UserConsentCreateView.as_view(), name='consent-create'),
     path('consent/bulk-update/', UserConsentBulkUpdateView.as_view(), name='consent-bulk-update'),
     
     # Dashboard et API
-    
     path('dashboard/organization-locations/', OrganizationLocationsView.as_view(), name='organization-locations'),
     path('dashboard/stats/', DashboardStatsView.as_view(), name='dashboard-stats'),
     path('dashboard/alerts', AlertsView.as_view(), name='dashboard-alerts'),
     path('dashboard/services/status', ServiceStatusView.as_view(), name='services-status'),
     path('dashboard/usage-trends', UsageView.as_view(), name='usage-trends'),
+    
     # API Router
     path('', include(router.urls)),
-     
 ]
+print("Routes disponibles:", [str(url) for url in router.urls])

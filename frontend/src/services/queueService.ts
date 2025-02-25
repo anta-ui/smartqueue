@@ -67,7 +67,7 @@ export const queueService = {
     }
   },
   createQueue: async (data: QueueCreateData) => {
-    const response = await api.post('/queues/', data);
+    const response = await api.post('/queues/queues/', data);
     return response.data;
   },
   /**
@@ -77,23 +77,28 @@ export const queueService = {
 
   updateQueueStatus: async (id: string, status: string): Promise<Queue> => {
     try {
-      // Convertir le statut avant l'envoi
       const mappedStatus = statusMapping[status as keyof typeof statusMapping] || status;
-      console.log('Envoi du statut mappé:', mappedStatus);
       
-      const response = await api.post(`/queues/queues/${id}/update_status/`, { 
-        status: mappedStatus 
-      });
+      // Afficher plus d'informations sur l'utilisateur et la requête
+      console.log('Tentative de mise à jour du statut pour la file:', id);
+      console.log('Statut demandé:', mappedStatus);
+      
+      // Vous pourriez avoir besoin d'inclure un en-tête spécifique
+      const response = await api.post(`/queues/queues/${id}/update_status/`, 
+        { status: mappedStatus },
+        /* { headers: { 'X-Organization': '...' } } */
+      );
+      
       return response.data;
     } catch (error: any) {
-      console.error('Données envoyées:', { status: mappedStatus });
-      console.error('Erreur complète:', error.response?.data);
+      console.error('Erreur HTTP:', error.response?.status);
+      console.error('Message d\'erreur:', error.response?.data);
       throw error;
     }
   },
   getQueues: async (): Promise<Queue[]> => {
     try {
-      const response = await api.get('/queues/');
+      const response = await api.get('/queues/queues/');
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la récupération des files d\'attente:', error);

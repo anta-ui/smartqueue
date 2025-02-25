@@ -2,8 +2,9 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import Link from 'next/link';
 import { queueService } from '@/services/queueService';
-import  {CreateQueueForm}  from '@/components/queues/CreateQueueForm';
+import { CreateQueueForm } from '@/components/queues/CreateQueueForm';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { Modal } from '@/components/ui/modal';
@@ -31,6 +32,8 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Icons } from '@/components/ui/icons';
+// Importer directement les icônes manquantes de Lucide
+import { Cog, AlertTriangle, Plus } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 
 // Types
@@ -45,10 +48,16 @@ interface Queue {
   queue_type: string;
 }
 
+interface QueueType {
+  id: string;
+  name: string;
+  category: 'VE' | 'PE' | 'MI';
+}
+
 export default function QueuesPage() {
   // États
   const [queues, setQueues] = useState<Queue[]>([]);
-  const [queueTypes, setQueueTypes] = useState<Queue[]>([]);
+  const [queueTypes, setQueueTypes] = useState<QueueType[]>([]);
   const [filteredQueues, setFilteredQueues] = useState<Queue[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -58,9 +67,10 @@ export default function QueuesPage() {
   const [statusFilter, setStatusFilter] = useState<QueueStatus | 'ALL'>('ALL');
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Chargement initial des files d'attente
+  // Chargement initial des files d'attente et types de files
   useEffect(() => {
     loadQueues();
+    loadQueueTypes();
   }, []);
 
   // Filtrage des files d'attente
@@ -114,6 +124,17 @@ export default function QueuesPage() {
     }
   };
 
+  // Charger les types de files d'attente
+  const loadQueueTypes = async () => {
+    try {
+      const types = await queueService.getQueueTypes();
+      console.log("Types de files reçus:", types);
+      setQueueTypes(types);
+    } catch (err) {
+      console.error("Erreur lors du chargement des types de files d'attente", err);
+    }
+  };
+
   // Supprimer une file d'attente
   const handleDeleteQueue = async (id: string) => {
     try {
@@ -123,7 +144,7 @@ export default function QueuesPage() {
         title: 'Succès',
         description: 'File d\'attente supprimée',
       });
-    } catch (error) {
+    } catch (err) {
       toast({
         title: 'Erreur',
         description: 'Impossible de supprimer la file d\'attente',
@@ -143,7 +164,7 @@ export default function QueuesPage() {
         title: 'Succès',
         description: 'Statut de la file d\'attente mis à jour',
       });
-    } catch (error) {
+    } catch (err) {
       toast({
         title: 'Erreur',
         description: 'Impossible de mettre à jour le statut',
@@ -151,15 +172,7 @@ export default function QueuesPage() {
       });
     }
   };
-  const loadQueueTypes = async () => {
-    try {
-      const types = await queueService.getQueueTypes();
-      console.log("Types de files reçus:", types);
-      setQueueTypes(types);
-    } catch (error) {
-      console.error("Erreur lors du chargement des types de files d'attente", error.response || error);
-    }
-  };
+
   // Statistiques
   const queueStats = useMemo(() => {
     if (!Array.isArray(queues)) {
@@ -183,11 +196,38 @@ export default function QueuesPage() {
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Gestion des Files d'Attente</h1>
-        <Button onClick={() => setIsCreateModalOpen(true)}>
-          <Icons.Plus className="mr-2" />
-          Nouvelle File d'Attente
-        </Button>
+        <div className="flex space-x-4">
+          <Link href="/dashboard/queue-types">
+            <Button variant="outline">
+              <Cog className="mr-2" />
+              Gérer les Types de Files
+            </Button>
+          </Link>
+          <Button onClick={() => setIsCreateModalOpen(true)}>
+            <Plus className="mr-2" />
+            Nouvelle File d'Attente
+          </Button>
+        </div>
       </div>
+
+      {/* Alerte si aucun type de file n'est configuré */}
+      {queueTypes.length === 0 && (
+        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <AlertTriangle className="h-5 w-5 text-yellow-400" />
+            </div>
+            <div className="ml-3">
+              <p className="text-sm text-yellow-700">
+                Aucun type de file d'attente n'est configuré. 
+                <Link href="/dashboard/queue-types" className="font-medium underline text-yellow-700 hover:text-yellow-600 ml-1">
+                  Créez un type de file
+                </Link> pour pouvoir créer des files d'attente.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Statistiques rapides */}
       <div className="grid grid-cols-4 gap-4">
@@ -237,68 +277,83 @@ export default function QueuesPage() {
       {/* Liste des files d'attente */}
       <Card>
         <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nom</TableHead>
-                <TableHead>Statut</TableHead>
-                <TableHead>Numéro Actuel</TableHead>
-                <TableHead>Temps d'Attente</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredQueues.map(queue => (
-                <TableRow key={queue.id}>
-                  <TableCell>{queue.name}</TableCell>
-                  <TableCell>
-                    <Badge 
-                      variant={
-                        queue.status === 'ACTIVE' ? 'success' :
-                        queue.status === 'PAUSED' ? 'warning' : 'destructive'
-                      }
-                    >
-                      {queue.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{queue.current_number}</TableCell>
-                  <TableCell>{queue.current_wait_time} min</TableCell>
-                  <TableCell>
-                    <div className="flex space-x-2">
-                      <Button 
-                        size="sm" 
-                        variant="secondary"
-                        onClick={() => {
-                          // Logique de modification
-                        }}
-                      >
-                        Modifier
-                      </Button>
-                      <Button 
-                        size="sm" 
-                        variant="outline"
-                        onClick={() => handleStatusChange(
-                          queue.id, 
-                          queue.status === 'ACTIVE' ? 'PAUSED' : 
-                          queue.status === 'PAUSED' ? 'CLOSED' : 'ACTIVE'
-                        )}
-                      >
-                        {queue.status === 'ACTIVE' ? 'Mettre en Pause' : 
-                         queue.status === 'PAUSED' ? 'Fermer' : 'Activer'}
-                      </Button>
-                      <Button 
-                        size="sm" 
-                        variant="destructive"
-                        onClick={() => handleDeleteQueue(queue.id)}
-                      >
-                        Supprimer
-                      </Button>
-                    </div>
-                  </TableCell>
+          {loading ? (
+            <div className="p-6 text-center">Chargement...</div>
+          ) : error ? (
+            <div className="p-6 text-center text-red-500">{error}</div>
+          ) : filteredQueues.length === 0 ? (
+            <div className="p-6 text-center">
+              Aucune file d'attente trouvée.
+              {queueTypes.length > 0 ? (
+                <span> Créez-en une pour commencer.</span>
+              ) : (
+                <span> Commencez par <Link href="/dashboard/queue-types" className="underline">créer un type de file d'attente</Link>.</span>
+              )}
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nom</TableHead>
+                  <TableHead>Statut</TableHead>
+                  <TableHead>Numéro Actuel</TableHead>
+                  <TableHead>Temps d'Attente</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {filteredQueues.map(queue => (
+                  <TableRow key={queue.id}>
+                    <TableCell>{queue.name}</TableCell>
+                    <TableCell>
+                      <Badge 
+                        variant={
+                          queue.status === 'ACTIVE' ? 'success' :
+                          queue.status === 'PAUSED' ? 'warning' : 'destructive'
+                        }
+                      >
+                        {queue.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{queue.current_number}</TableCell>
+                    <TableCell>{queue.current_wait_time} min</TableCell>
+                    <TableCell>
+                      <div className="flex space-x-2">
+                        <Button 
+                          size="sm" 
+                          variant="secondary"
+                          onClick={() => {
+                            // Logique de modification
+                          }}
+                        >
+                          Modifier
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => handleStatusChange(
+                            queue.id, 
+                            queue.status === 'ACTIVE' ? 'PAUSED' : 
+                            queue.status === 'PAUSED' ? 'CLOSED' : 'ACTIVE'
+                          )}
+                        >
+                          {queue.status === 'ACTIVE' ? 'Mettre en Pause' : 
+                            queue.status === 'PAUSED' ? 'Fermer' : 'Activer'}
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="destructive"
+                          onClick={() => handleDeleteQueue(queue.id)}
+                        >
+                          Supprimer
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
       </Card>
 

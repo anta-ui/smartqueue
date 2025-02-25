@@ -24,9 +24,6 @@ logger = logging.getLogger(__name__)
 User = get_user_model()
 
 class OrganizationViewSet(viewsets.ModelViewSet):
-    """
-    ViewSet pour gérer toutes les opérations liées aux organisations
-    """
     authentication_classes = [JWTAuthentication, CustomSessionAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = OrganizationSerializer
@@ -36,14 +33,29 @@ class OrganizationViewSet(viewsets.ModelViewSet):
         print("User:", self.request.user)
         print("Organization ID:", self.kwargs.get('pk'))
         
+        # Si l'action est 'retrieve' et l'ID est 'new', renvoyer un queryset vide
+        if self.action == 'retrieve' and self.kwargs.get('pk') == 'new':
+            return Organization.objects.none()
+        
         if self.action == 'list':
             return Organization.objects.filter(created_by=self.request.user)
+        
         return Organization.objects.filter(
             id=self.kwargs.get('pk'),
             created_by=self.request.user
         )
+
     def retrieve(self, request, *args, **kwargs):
-        print("Retrieve called with kwargs:", kwargs)
+        # Gestion spéciale pour 'new'
+        if kwargs.get('pk') == 'new':
+            # Renvoyer une réponse vide ou avec des valeurs par défaut
+            return Response({
+                'id': 'new',
+                'name': '',
+                'status': 'active',
+                'plan': 'standard'
+            }, status=status.HTTP_200_OK)
+        
         return super().retrieve(request, *args, **kwargs)
     def perform_create(self, serializer):
         """Crée une nouvelle organisation et l'assigne à l'utilisateur"""
@@ -166,3 +178,4 @@ class OrganizationViewSet(viewsets.ModelViewSet):
                 )
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
