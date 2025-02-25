@@ -80,8 +80,14 @@ class OrganizationViewSet(viewsets.ModelViewSet):
     
     def perform_destroy(self, instance):
         try:
+             # Mémoriser l'ID avant la suppression
+            instance_id = instance.id
+            logger.info(f"Tentative de suppression de l'organisation {instance_id}")
+            instance.delete()
+        
+            logger.info(f"Organisation {instance_id} supprimée avec succès")
             # Log de la tentative de suppression
-            logger.info(f"Tentative de suppression de l'organisation {instance.id}")
+            
 
             # Dissocier les utilisateurs de l'organisation
             User.objects.filter(organization=instance).update(organization=None)

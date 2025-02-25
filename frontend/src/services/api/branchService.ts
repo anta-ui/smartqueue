@@ -10,7 +10,7 @@ export interface Branch {
   city: string;
   country: string;
   is_active: boolean;
-  organization: string;
+  organization: string | number;
 }
 
 export interface BranchFormData {
@@ -23,7 +23,7 @@ export interface BranchFormData {
 }
 
 export interface BranchUpdateData extends BranchFormData {
-  organization: string | number;
+  organization: number; // Changé en number explicitement
 }
 
 // Utilisation de l'export de type objet
@@ -40,36 +40,55 @@ export const branchService = {
     if (organizationId === 'new') {
       return [];
     }
-    const response = await api.get(`/organizations/${organizationId}/branches/`);
+    // Utiliser l'URL qui correspond au backend
+    const response = await api.get(`/organization-branches/by-organization/${organizationId}/`);
     return response.data;
   },
 
   // Créer une nouvelle branche
   create: async (branchData: BranchUpdateData): Promise<Branch> => {
     try {
-        const response = await api.post('/organization-branches/', branchData);
-        return response.data;
+      console.log('Données envoyées pour création:', branchData, 'Type de organization:', typeof branchData.organization);
+      const response = await api.post('/organization-branches/', branchData);
+      return response.data;
     } catch (error: unknown) {
-        if (axios.isAxiosError(error)) {
-            console.error('Détails complets de l\'erreur:', {
-                responseData: error.response?.data,
-                responseStatus: error.response?.status,
-                message: error.message
-            });
-            const errorData = error.response?.data;
-            let errorMessage = 'Une erreur est survenue';
-            if (typeof errorData === 'object') {
-                if (errorData.detail) {
-                    errorMessage = errorData.detail;
-                } else if (errorData.non_field_errors) {
-                    errorMessage = errorData.non_field_errors[0];
-                }
-            }
-            throw new Error(errorMessage);
-        } else {
-            console.error('Erreur inattendue:', error);
-            throw new Error('Une erreur inattendue est survenue');
+      if (axios.isAxiosError(error)) {
+        console.error('Détails complets de l\'erreur:', {
+          responseData: error.response?.data,
+          responseStatus: error.response?.status,
+          requestData: branchData, 
+          message: error.message,
+          organizationType: typeof branchData.organization,
+          organizationValue: branchData.organization
+        });
+        
+        const errorData = error.response?.data;
+        let errorMessage = 'Une erreur est survenue';
+        
+        if (typeof errorData === 'object') {
+          // Vérifier les différentes possibilités d'erreur
+          if (errorData.code) {
+            errorMessage = `Erreur de code: ${errorData.code}`;
+          } else if (errorData.organization) {
+            errorMessage = `Erreur d'organisation: ${errorData.organization}`;
+          } else if (errorData.detail) {
+            errorMessage = errorData.detail;
+          } else if (errorData.non_field_errors) {
+            errorMessage = errorData.non_field_errors[0];
+          } else if (Object.keys(errorData).length > 0) {
+            // S'il y a d'autres erreurs spécifiques à des champs
+            const fieldErrors = Object.entries(errorData)
+              .map(([field, errors]) => `${field}: ${errors}`)
+              .join(', ');
+            errorMessage = `Erreurs de validation: ${fieldErrors}`;
+          }
         }
+        
+        throw new Error(errorMessage);
+      } else {
+        console.error('Erreur inattendue:', error);
+        throw new Error('Une erreur inattendue est survenue');
+      }
     }
   },
 
@@ -82,29 +101,44 @@ export const branchService = {
   // Mettre à jour une branche
   update: async (id: string, data: BranchUpdateData): Promise<Branch> => {
     try {
-        const response = await api.patch(`/organization-branches/${id}/`, data);
-        return response.data;
+      console.log('Données envoyées pour mise à jour:', data);
+      const response = await api.patch(`/organization-branches/${id}/`, data);
+      return response.data;
     } catch (error: unknown) {
-        if (axios.isAxiosError(error)) {
-            console.error('Détails complets de l\'erreur:', {
-                responseData: error.response?.data,
-                responseStatus: error.response?.status,
-                message: error.message
-            });
-            const errorData = error.response?.data;
-            let errorMessage = 'Une erreur est survenue';
-            if (typeof errorData === 'object') {
-                if (errorData.detail) {
-                    errorMessage = errorData.detail;
-                } else if (errorData.non_field_errors) {
-                    errorMessage = errorData.non_field_errors[0];
-                }
-            }
-            throw new Error(errorMessage);
-        } else {
-            console.error('Erreur inattendue:', error);
-            throw new Error('Une erreur inattendue est survenue');
+      if (axios.isAxiosError(error)) {
+        console.error('Détails complets de l\'erreur:', {
+          responseData: error.response?.data,
+          responseStatus: error.response?.status,
+          requestData: data,
+          message: error.message
+        });
+        
+        const errorData = error.response?.data;
+        let errorMessage = 'Une erreur est survenue';
+        
+        if (typeof errorData === 'object') {
+          // Même logique que pour create
+          if (errorData.code) {
+            errorMessage = `Erreur de code: ${errorData.code}`;
+          } else if (errorData.organization) {
+            errorMessage = `Erreur d'organisation: ${errorData.organization}`;
+          } else if (errorData.detail) {
+            errorMessage = errorData.detail;
+          } else if (errorData.non_field_errors) {
+            errorMessage = errorData.non_field_errors[0];
+          } else if (Object.keys(errorData).length > 0) {
+            const fieldErrors = Object.entries(errorData)
+              .map(([field, errors]) => `${field}: ${errors}`)
+              .join(', ');
+            errorMessage = `Erreurs de validation: ${fieldErrors}`;
+          }
         }
+        
+        throw new Error(errorMessage);
+      } else {
+        console.error('Erreur inattendue:', error);
+        throw new Error('Une erreur inattendue est survenue');
+      }
     }
   },
 

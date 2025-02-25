@@ -1,65 +1,76 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/components/ui/use-toast';
-import { branchService } from '@/services/api/branchService';
+import { branchService, Branch } from '@/services/api/branchService';
+
+// Définition des interfaces
+export interface BranchFormData {
+  name: string;
+  code: string;
+  address?: string;
+  city: string;
+  country: string;
+  is_active?: boolean;
+}
+
+export interface BranchUpdateData extends BranchFormData {
+  organization: number; // Changer en number explicitement
+}
 
 interface BranchFormProps {
-  branch?: Branch; // Si vous avez déjà cette interface
-  organizationId: string | number; // Type explicite pour organizationId
+  branch?: Branch;
+  organizationId: string | number;
   onSuccess: () => void;
   onCancel: () => void;
   isEditing?: boolean;
 }
 
-  export function BranchForm({ 
-    branch, 
-    organizationId, 
-    onSuccess, 
-    onCancel, 
-    isEditing = false 
-  }: BranchFormProps) {
+export function BranchForm({ 
+  branch, 
+  organizationId, 
+  onSuccess, 
+  onCancel, 
+  isEditing = false 
+}: BranchFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const { control, handleSubmit, formState: { errors } } = useForm({
-    defaultValues: isEditing 
-      ? { ...branch }
-      : {
-          name: '',
-          code: '',
-          address: '',
-          city: '',
-          country: '',
-          is_active: true,
-          organization: organizationId
-        }
-  });
+  // Typage correct des valeurs par défaut du formulaire
+  const defaultValues: Partial<BranchFormData> = isEditing && branch 
+    ? {
+        name: branch.name,
+        code: branch.code,
+        address: branch.address,
+        city: branch.city,
+        country: branch.country,
+        is_active: branch.is_active
+      }
+    : {
+        name: '',
+        code: '',
+        address: '',
+        city: '',
+        country: '',
+        is_active: true
+      };
 
+  const { control, handleSubmit, formState: { errors } } = useForm<BranchFormData>({
+    defaultValues
+  });
   
-  interface BranchFormData {
-    name: string;
-    code: string;
-    address?: string;
-    city: string;
-    country: string;
-    is_active?: boolean;
-  }
-  
-  interface BranchUpdateData extends BranchFormData {
-    organization: string | number;
-  }
-  
-  const onSubmit = async (data: BranchFormData) => {
+  const onSubmit: SubmitHandler<BranchFormData> = async (data) => {
     try {
       setIsSubmitting(true);
       
-      // Vérifiez que organizationId est défini
+      console.log("Type et valeur de organizationId:", typeof organizationId, organizationId);
+      
+      // Vérification améliorée
       if (!organizationId) {
         toast({
           title: 'Erreur',
@@ -68,13 +79,44 @@ interface BranchFormProps {
         });
         return;
       }
-  
+      
+      // Si l'ID est 'new', on ne peut pas créer de branche
+      if (organizationId === 'new') {
+        toast({
+          title: 'Erreur',
+          description: 'Veuillez d\'abord créer l\'organisation',
+          variant: 'destructive'
+        });
+        return;
+      }
+      
+      // Conversion forcée en nombre
+      let orgId: number;
+      
+      if (typeof organizationId === 'string') {
+        orgId = parseInt(organizationId, 10);
+        if (isNaN(orgId)) {
+          toast({
+            title: 'Erreur',
+            description: 'ID d\'organisation invalide',
+            variant: 'destructive'
+          });
+          return;
+        }
+      } else {
+        orgId = organizationId as number;
+      }
+      
+      console.log("ID d'organisation après conversion:", orgId, typeof orgId);
+      
       const branchData: BranchUpdateData = {
         ...data,
-        organization: organizationId
+        organization: orgId
       };
       
-      if (isEditing) {
+      console.log('Données envoyées au serveur:', branchData);
+      
+      if (isEditing && branch) {
         await branchService.update(branch.id, branchData);
       } else {
         await branchService.create(branchData);
@@ -103,6 +145,7 @@ interface BranchFormProps {
       setIsSubmitting(false);
     }
   };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="space-y-4">

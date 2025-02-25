@@ -11,7 +11,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { branchService } from '@/services/api/branchService';
 import { BranchForm } from './BranchForm';
-
+import { DialogDescription } from '@/components/ui/dialog';
 export function BranchesList() {
   const { id: organizationId } = useParams();
   const [branches, setBranches] = useState([]);
@@ -21,7 +21,7 @@ export function BranchesList() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedBranch, setSelectedBranch] = useState(null);
   const { toast } = useToast();
-
+  const isNewOrganization = organizationId === 'new';
   // Charger les branches de l'organisation
   const loadBranches = async () => {
     try {
@@ -94,15 +94,21 @@ export function BranchesList() {
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">Branches</h2>
-        <Button onClick={() => setIsCreateModalOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Nouvelle Branche
-        </Button>
+        {!isNewOrganization && (
+          <Button onClick={() => setIsCreateModalOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            Nouvelle Branche
+          </Button>
+        )}
       </div>
 
       <Card>
         <CardContent className="p-0">
-          {branches.length === 0 ? (
+          {isNewOrganization ? (
+            <div className="p-6 text-center text-gray-500">
+              Veuillez d'abord enregistrer l'organisation avant d'ajouter des branches.
+            </div>
+          ) : branches.length === 0 ? (
             <div className="p-6 text-center text-gray-500">
               Aucune branche trouvée. Créez votre première branche.
             </div>
@@ -157,31 +163,38 @@ export function BranchesList() {
 
       {/* Modale de création */}
       <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
-        <DialogContent>
-          <DialogTitle>Créer une nouvelle branche</DialogTitle>
-          <BranchForm 
-            organizationId={organizationId}
-            onSuccess={handleCreateSuccess}
-            onCancel={() => setIsCreateModalOpen(false)}
-          />
-        </DialogContent>
-      </Dialog>
+  <DialogContent>
+    <DialogTitle>Créer une nouvelle branche</DialogTitle>
+    <DialogDescription>
+      Veuillez remplir le formulaire pour créer une nouvelle branche pour cette organisation.
+    </DialogDescription>
+    <BranchForm 
+      organizationId={organizationId}
+      onSuccess={handleCreateSuccess}
+      onCancel={() => setIsCreateModalOpen(false)}
+    />
+  </DialogContent>
+</Dialog>
 
-      {/* Modale d'édition */}
-      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent>
-          <DialogTitle>Modifier la branche</DialogTitle>
-          {selectedBranch && (
-            <BranchForm 
-              branch={selectedBranch}
-              organizationId={organizationId}
-              onSuccess={handleUpdateSuccess}
-              onCancel={() => setIsEditModalOpen(false)}
-              isEditing
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+{/* Modale d'édition */}
+<Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+  <DialogContent>
+    <DialogTitle>Modifier la branche</DialogTitle>
+    <DialogDescription>
+      Modifiez les informations de cette branche.
+    </DialogDescription>
+    {selectedBranch && (
+      <BranchForm 
+        branch={selectedBranch}
+        organizationId={organizationId}
+        onSuccess={handleUpdateSuccess}
+        onCancel={() => setIsEditModalOpen(false)}
+        isEditing
+      />
+    )}
+  </DialogContent>
+</Dialog>
+     
     </div>
   );
 }

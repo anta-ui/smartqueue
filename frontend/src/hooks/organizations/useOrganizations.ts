@@ -12,19 +12,20 @@ export interface Organization {
 }
 
 export function useOrganizations() {
-  const [organizations, setOrganizations] = useState<Organization[]>([]);  // Initialiser avec un tableau vide
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchOrganizations = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/organization/members/');
-      setOrganizations(Array.isArray(response.data) ? response.data : []);  // S'assurer que c'est un tableau
+      // Changez cette URL pour utiliser /api/organizations/ au lieu de /api/organization/members/
+      const response = await api.get('/organizations/');
+      setOrganizations(Array.isArray(response.data) ? response.data : []);
     } catch (err) {
       console.error('Error fetching organizations:', err);
       setError('Erreur lors du chargement des organisations');
-      setOrganizations([]); // Réinitialiser à un tableau vide en cas d'erreur
+      setOrganizations([]);
     } finally {
       setLoading(false);
     }
