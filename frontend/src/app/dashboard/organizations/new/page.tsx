@@ -3,13 +3,13 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-// Supprimez l'import du Label
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { organizationService } from '@/services/api/organizationService';
+import { ArrowLeft, Building, Check, Loader2 } from 'lucide-react';
 
 export default function NewOrganizationPage() {
   const router = useRouter();
@@ -55,67 +55,101 @@ export default function NewOrganizationPage() {
   };
 
   return (
-    <div className="container mx-auto py-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Créer une nouvelle organisation</CardTitle>
+    <div className="max-w-2xl mx-auto py-8">
+      <div className="mb-6 flex items-center">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={() => router.push('/dashboard/organizations')} 
+          className="mr-4"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Retour
+        </Button>
+        
+      </div>
+
+      <Card className="shadow-md border-gray-200">
+        <CardHeader className="bg-gray-50 border-b border-gray-200">
+          <div className="flex items-center gap-3">
+            <div className="bg-primary/10 p-2 rounded-full">
+              <Building className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <CardTitle>Informations de l'organisation</CardTitle>
+              <CardDescription>Remplissez les détails pour créer une nouvelle organisation</CardDescription>
+            </div>
+          </div>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <CardContent className="pt-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              {/* Remplacer Label par une balise de texte simple */}
-              <p className="text-sm font-medium">Nom de l'organisation</p>
+              <label htmlFor="name" className="text-sm font-medium text-gray-700 block">
+                Nom de l'organisation <span className="text-red-500">*</span>
+              </label>
               <Input
                 id="name"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
                 required
-                placeholder="Nom de l'organisation"
+                placeholder="Entrez le nom de l'organisation"
+                className="w-full"
               />
+              <p className="text-xs text-gray-500">
+                Ce nom sera visible par tous les membres de l'organisation
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label htmlFor="plan" className="text-sm font-medium text-gray-700 block">
+                  Plan <span className="text-red-500">*</span>
+                </label>
+                <Select
+                  value={formData.plan}
+                  onValueChange={(value) => handleSelectChange('plan', value)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Sélectionnez un plan" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="free">Gratuit</SelectItem>
+                    <SelectItem value="basic">Basic</SelectItem>
+                    <SelectItem value="premium">Premium</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="status" className="text-sm font-medium text-gray-700 block">
+                  Statut <span className="text-red-500">*</span>
+                </label>
+                <Select
+                  value={formData.status}
+                  onValueChange={(value) => handleSelectChange('status', value)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Sélectionnez un statut" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">Actif</SelectItem>
+                    <SelectItem value="inactive">Inactif</SelectItem>
+                    <SelectItem value="pending">En attente</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             <div className="space-y-2">
-              <p className="text-sm font-medium">Plan</p>
-              <Select
-                value={formData.plan}
-                onValueChange={(value) => handleSelectChange('plan', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionnez un plan" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="free">Gratuit</SelectItem>
-                  <SelectItem value="basic">Basic</SelectItem>
-                  <SelectItem value="premium">Premium</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <p className="text-sm font-medium">Statut</p>
-              <Select
-                value={formData.status}
-                onValueChange={(value) => handleSelectChange('status', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionnez un statut" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="active">Actif</SelectItem>
-                  <SelectItem value="inactive">Inactif</SelectItem>
-                  <SelectItem value="pending">En attente</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <p className="text-sm font-medium">Région</p>
+              <label htmlFor="region" className="text-sm font-medium text-gray-700 block">
+                Région <span className="text-red-500">*</span>
+              </label>
               <Select
                 value={formData.region}
                 onValueChange={(value) => handleSelectChange('region', value)}
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Sélectionnez une région" />
                 </SelectTrigger>
                 <SelectContent>
@@ -128,21 +162,34 @@ export default function NewOrganizationPage() {
               </Select>
             </div>
 
-            <div className="flex justify-end space-x-2 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => router.push('/dashboard/organizations')}
-                disabled={isSubmitting}
-              >
-                Annuler
-              </Button>
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? 'Création...' : 'Créer'}
-              </Button>
+            <div className="border-t border-gray-200 pt-6 mt-6">
+              <div className="flex justify-end gap-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => router.push('/dashboard/organizations')}
+                  disabled={isSubmitting}
+                >
+                  Annuler
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="min-w-[120px]"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Création...
+                    </>
+                  ) : (
+                    <>
+                      <Check className="mr-2 h-4 w-4" />
+                      Créer
+                    </>
+                  )}
+                </Button>
+              </div>
             </div>
           </form>
         </CardContent>

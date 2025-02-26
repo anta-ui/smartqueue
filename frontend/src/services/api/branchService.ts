@@ -40,9 +40,15 @@ export const branchService = {
     if (organizationId === 'new') {
       return [];
     }
-    // Utiliser l'URL qui correspond au backend
-    const response = await api.get(`/organization-branches/by-organization/${organizationId}/`);
-    return response.data;
+    
+    try {
+      // Essayer une autre URL qui pourrait avoir les permissions correctes
+      const response = await api.get(`/organization-branches/?organization=${organizationId}`);
+      return response.data;
+    } catch (error) {
+      console.error("Erreur lors de la récupération des branches:", error);
+      throw error;
+    }
   },
 
   // Créer une nouvelle branche

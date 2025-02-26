@@ -3,34 +3,50 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
-import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Plus, Edit, Trash2, ShieldAlert } from 'lucide-react';
 import { branchService } from '@/services/api/branchService';
 import { BranchForm } from './BranchForm';
-import { DialogDescription } from '@/components/ui/dialog';
+
 export function BranchesList() {
   const { id: organizationId } = useParams();
   const [branches, setBranches] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isPermissionError, setIsPermissionError] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedBranch, setSelectedBranch] = useState(null);
   const { toast } = useToast();
+  
   const isNewOrganization = organizationId === 'new';
+
   // Charger les branches de l'organisation
   const loadBranches = async () => {
+    if (isNewOrganization) {
+      setIsLoading(false);
+      return;
+    }
+    
     try {
       setIsLoading(true);
+      setIsPermissionError(false);
       const data = await branchService.getByOrganization(organizationId);
       setBranches(data);
     } catch (err) {
-      setError('Impossible de charger les branches');
-      console.error(err);
+      console.error('Erreur lors du chargement des branches:', err);
+      
+      // Vérifier si c'est une erreur de permission (403)
+      if (err.response && err.response.status === 403) {
+        setIsPermissionError(true);
+        setError('Vous n\'avez pas la permission d\'accéder aux branches de cette organisation');
+      } else {
+        setError('Impossible de charger les branches');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -83,15 +99,43 @@ export function BranchesList() {
   };
 
   if (isLoading) {
-    return <div className="p-4 text-center">Chargement des branches...</div>;
+    return (
+      <div className="flex justify-center items-center p-6">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <span className="ml-3 text-gray-600">Chargement des branches...</span>
+      </div>
+    );
   }
 
-  if (error) {
-    return <div className="p-4 text-center text-red-500">{error}</div>;
+  if (isPermissionError) {
+    return (
+      <div className="p-6">
+        <Card className="border-yellow-200 bg-yellow-50">
+          <CardContent className="p-6">
+            <div className="flex items-start">
+              <div className="flex-shrink-0">
+                <ShieldAlert className="h-8 w-8 text-yellow-500" />
+              </div>
+              <div className="ml-4">
+                <h3 className="text-lg font-medium text-yellow-800">Problème de permission</h3>
+                <div className="mt-2 text-sm text-yellow-700">
+                  <p>Vous n'avez pas les droits nécessaires pour accéder aux branches de cette organisation.</p>
+                  <p className="mt-2">Cette fonctionnalité pourrait nécessiter des permissions supplémentaires.</p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (error && !isPermissionError) {
+    return <div className="p-6 text-center text-red-500">{error}</div>;
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 p-6">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">Branches</h2>
         {!isNewOrganization && (
@@ -163,38 +207,37 @@ export function BranchesList() {
 
       {/* Modale de création */}
       <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
-  <DialogContent>
-    <DialogTitle>Créer une nouvelle branche</DialogTitle>
-    <DialogDescription>
-      Veuillez remplir le formulaire pour créer une nouvelle branche pour cette organisation.
-    </DialogDescription>
-    <BranchForm 
-      organizationId={organizationId}
-      onSuccess={handleCreateSuccess}
-      onCancel={() => setIsCreateModalOpen(false)}
-    />
-  </DialogContent>
-</Dialog>
+        <DialogContent>
+          <DialogTitle>Créer une nouvelle branche</DialogTitle>
+          <DialogDescription>
+            Veuillez remplir le formulaire pour créer une nouvelle branche pour cette organisation.
+          </DialogDescription>
+          <BranchForm 
+            organizationId={organizationId}
+            onSuccess={handleCreateSuccess}
+            onCancel={() => setIsCreateModalOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
 
-{/* Modale d'édition */}
-<Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-  <DialogContent>
-    <DialogTitle>Modifier la branche</DialogTitle>
-    <DialogDescription>
-      Modifiez les informations de cette branche.
-    </DialogDescription>
-    {selectedBranch && (
-      <BranchForm 
-        branch={selectedBranch}
-        organizationId={organizationId}
-        onSuccess={handleUpdateSuccess}
-        onCancel={() => setIsEditModalOpen(false)}
-        isEditing
-      />
-    )}
-  </DialogContent>
-</Dialog>
-     
+      {/* Modale d'édition */}
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent>
+          <DialogTitle>Modifier la branche</DialogTitle>
+          <DialogDescription>
+            Modifiez les informations de cette branche.
+          </DialogDescription>
+          {selectedBranch && (
+            <BranchForm 
+              branch={selectedBranch}
+              organizationId={organizationId}
+              onSuccess={handleUpdateSuccess}
+              onCancel={() => setIsEditModalOpen(false)}
+              isEditing
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

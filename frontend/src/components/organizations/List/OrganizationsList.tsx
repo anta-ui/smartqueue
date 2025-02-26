@@ -6,7 +6,7 @@ import { useOrganizations } from '@/hooks/organizations/useOrganizations';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, ArrowRight } from 'lucide-react';
+import { Plus, ArrowRight, Edit } from 'lucide-react';
 
 const OrganizationsList = () => {
   const { organizations, loading, error } = useOrganizations();
@@ -83,14 +83,25 @@ const OrganizationsList = () => {
                   )}
                 </div>
                 
-                <Button 
-                  variant="outline" 
-                  className="w-full" 
-                  onClick={() => router.push(`/dashboard/organizations/${org.id}`)}
-                >
-                  Voir les détails
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
+                <div className="flex gap-2">
+                  <Button 
+                    variant="outline" 
+                    className="flex-1" 
+                    onClick={() => router.push(`/dashboard/organizations/${org.id}`)}
+                  >
+                    Détails
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                  
+                  <Button 
+                    variant="secondary" 
+                    className="flex-1"
+                    onClick={() => router.push(`/dashboard/organizations/${org.id}/edit`)}
+                  >
+                    <Edit className="h-4 w-4 mr-2" />
+                    Modifier
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ))
