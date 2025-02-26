@@ -77,16 +77,12 @@ export const queueService = {
 
   updateQueueStatus: async (id: string, status: string): Promise<Queue> => {
     try {
-      const mappedStatus = statusMapping[status as keyof typeof statusMapping] || status;
-      
-      // Afficher plus d'informations sur l'utilisateur et la requête
       console.log('Tentative de mise à jour du statut pour la file:', id);
-      console.log('Statut demandé:', mappedStatus);
+      console.log('Statut envoyé à l\'API:', status);
       
-      // Vous pourriez avoir besoin d'inclure un en-tête spécifique
+      // S'assurer que le statut est au format API (AC, PA, CL, MA)
       const response = await api.post(`/queues/queues/${id}/update_status/`, 
-        { status: mappedStatus },
-        /* { headers: { 'X-Organization': '...' } } */
+        { status: status },
       );
       
       return response.data;

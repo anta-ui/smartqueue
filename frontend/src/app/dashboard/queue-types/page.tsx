@@ -16,7 +16,7 @@ import {
   TableCell 
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { PlusCircle, List, Plus } from 'lucide-react';
+import { PlusCircle, List, Plus, Edit } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import { CreateQueueTypeForm } from '@/components/queues/CreateQueueTypeForm';
 import { queueTypeService } from '@/services/queueTypeService';
@@ -27,6 +27,8 @@ export default function QueueTypesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [currentQueueType, setCurrentQueueType] = useState(null);
   const [isCreateQueueModalOpen, setIsCreateQueueModalOpen] = useState(false);
 
   // Chargement des types de files
@@ -82,6 +84,12 @@ export default function QueueTypesPage() {
         variant: 'destructive'
       });
     }
+  };
+
+  // Fonction pour ouvrir la modale de modification
+  const handleEditQueueType = (queueType) => {
+    setCurrentQueueType(queueType);
+    setIsEditModalOpen(true);
   };
 
   return (
@@ -215,14 +223,9 @@ export default function QueueTypesPage() {
                         <Button 
                           size="sm" 
                           variant="secondary"
-                          onClick={() => {
-                            // Logique de modification (à implémenter ultérieurement)
-                            toast({
-                              title: 'Information',
-                              description: 'La modification sera disponible dans une future mise à jour.'
-                            });
-                          }}
+                          onClick={() => handleEditQueueType(type)}
                         >
+                          <Edit className="mr-1 h-4 w-4" />
                           Modifier
                         </Button>
                         <Button 
@@ -242,19 +245,7 @@ export default function QueueTypesPage() {
         </CardContent>
       </Card>
 
-      {/* Actions en pied de page */}
-      {queueTypes.length > 0 && (
-        <div className="flex justify-center mt-6">
-          <Button 
-            onClick={handleCreateQueue}
-            size="lg"
-            className="px-8"
-          >
-            <PlusCircle className="mr-2" />
-            Créer une Nouvelle File d'Attente
-          </Button>
-        </div>
-      )}
+      
 
       {/* Modal de création de type de file */}
       <Modal 
@@ -268,6 +259,28 @@ export default function QueueTypesPage() {
           }}
           onClose={() => setIsCreateModalOpen(false)}
         />
+      </Modal>
+
+      {/* Modal de modification de type de file */}
+      <Modal 
+        isOpen={isEditModalOpen} 
+        onClose={() => setIsEditModalOpen(false)}
+      >
+        {currentQueueType && (
+          <CreateQueueTypeForm 
+            initialData={currentQueueType}
+            isEditing={true}
+            onSuccess={() => {
+              setIsEditModalOpen(false);
+              loadQueueTypes();
+              toast({
+                title: 'Succès',
+                description: 'Type de file modifié avec succès',
+              });
+            }}
+            onClose={() => setIsEditModalOpen(false)}
+          />
+        )}
       </Modal>
     </div>
   );

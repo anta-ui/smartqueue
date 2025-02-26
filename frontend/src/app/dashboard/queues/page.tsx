@@ -37,7 +37,23 @@ import { Cog, AlertTriangle, Plus } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 
 // Types
-type QueueStatus = 'ACTIVE' | 'PAUSED' | 'CLOSED';
+type QueueStatus = 'ACTIVE' | 'PAUSED' | 'CLOSED' | 'MAINTENANCE';
+type ApiQueueStatus = 'AC' | 'PA' | 'CL' | 'MA';
+
+// Mappings de conversion entre les formats UI et API
+const statusMappingToUI = {
+  'AC': 'ACTIVE',
+  'PA': 'PAUSED',
+  'CL': 'CLOSED',
+  'MA': 'MAINTENANCE'
+} as const;
+
+const statusMappingToAPI = {
+  'ACTIVE': 'AC',
+  'PAUSED': 'PA',
+  'CLOSED': 'CL',
+  'MAINTENANCE': 'MA'
+} as const;
 
 interface Queue {
   id: string;
@@ -46,6 +62,7 @@ interface Queue {
   current_number: number;
   current_wait_time: number;
   queue_type: string;
+  is_priority?: boolean;
 }
 
 interface QueueType {
@@ -64,6 +81,8 @@ export default function QueuesPage() {
   
   // États de l'interface
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedQueue, setSelectedQueue] = useState<Queue | null>(null);
   const [statusFilter, setStatusFilter] = useState<QueueStatus | 'ALL'>('ALL');
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -110,8 +129,14 @@ export default function QueuesPage() {
         }
       }
       
-      console.log('Données des files d\'attente:', queuesData);
-      setQueues(queuesData);
+      // Convertir les statuts du format API vers le format UI
+      const processedQueues = queuesData.map(queue => ({
+        ...queue,
+        status: statusMappingToUI[queue.status as ApiQueueStatus] || queue.status
+      }));
+      
+      console.log('Données des files d\'attente après conversion:', processedQueues);
+      setQueues(processedQueues);
       
       if (queuesData.length === 0) {
         console.warn('Aucune file d\'attente trouvée');
@@ -156,15 +181,23 @@ export default function QueuesPage() {
   // Mettre à jour le statut
   const handleStatusChange = async (id: string, newStatus: QueueStatus) => {
     try {
-      await queueService.updateQueueStatus(id, newStatus);
+      // Convertir du format UI vers le format API
+      const apiStatus = statusMappingToAPI[newStatus] || 'AC';
+      
+      console.log(`Mise à jour du statut: ${newStatus} (UI) -> ${apiStatus} (API)`);
+      
+      await queueService.updateQueueStatus(id, apiStatus);
+      
       setQueues(queues.map(q => 
         q.id === id ? { ...q, status: newStatus } : q
       ));
+      
       toast({
         title: 'Succès',
         description: 'Statut de la file d\'attente mis à jour',
       });
     } catch (err) {
+      console.error("Erreur lors de la mise à jour du statut:", err);
       toast({
         title: 'Erreur',
         description: 'Impossible de mettre à jour le statut',
@@ -263,6 +296,7 @@ export default function QueuesPage() {
             <SelectItem value="ACTIVE">Actif</SelectItem>
             <SelectItem value="PAUSED">En Pause</SelectItem>
             <SelectItem value="CLOSED">Fermé</SelectItem>
+            <SelectItem value="MAINTENANCE">Maintenance</SelectItem>
           </SelectContent>
         </Select>
 
@@ -309,7 +343,8 @@ export default function QueuesPage() {
                       <Badge 
                         variant={
                           queue.status === 'ACTIVE' ? 'success' :
-                          queue.status === 'PAUSED' ? 'warning' : 'destructive'
+                          queue.status === 'PAUSED' ? 'warning' :
+                          queue.status === 'CLOSED' ? 'destructive' : 'outline'
                         }
                       >
                         {queue.status}
@@ -323,7 +358,8 @@ export default function QueuesPage() {
                           size="sm" 
                           variant="secondary"
                           onClick={() => {
-                            // Logique de modification
+                            setSelectedQueue(queue);
+                            setIsEditModalOpen(true);
                           }}
                         >
                           Modifier
@@ -367,7 +403,26 @@ export default function QueuesPage() {
             setIsCreateModalOpen(false);
             loadQueues();
           }}
+          onClose={() => setIsCreateModalOpen(false)}
         />
+      </Modal>
+
+      {/* Modal d'édition */}
+      <Modal 
+        isOpen={isEditModalOpen} 
+        onClose={() => setIsEditModalOpen(false)}
+      >
+        {selectedQueue && (
+          <CreateQueueForm 
+            queue={selectedQueue}
+            isEditing={true}
+            onSuccess={() => {
+              setIsEditModalOpen(false);
+              loadQueues();
+            }}
+            onClose={() => setIsEditModalOpen(false)}
+          />
+        )}
       </Modal>
     </div>
   );

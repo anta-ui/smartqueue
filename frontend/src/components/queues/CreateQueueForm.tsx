@@ -33,13 +33,28 @@ interface QueueFormData {
   is_priority?: boolean;
 }
 
+// Interface pour une file d'attente
+interface Queue {
+  id: string;
+  name: string;
+  status: string;
+  queue_type: string;
+  current_number?: number;
+  current_wait_time?: number;
+  is_priority?: boolean;
+}
+
 // Props du composant
 interface CreateQueueFormProps {
+  queue?: Queue;
+  isEditing?: boolean;
   onSuccess?: () => void;
   onClose?: () => void;
 }
 
 export function CreateQueueForm({ 
+  queue,
+  isEditing = false,
   onSuccess, 
   onClose 
 }: CreateQueueFormProps) {
@@ -47,14 +62,21 @@ export function CreateQueueForm({
   const [queueTypes, setQueueTypes] = useState<QueueType[]>([]);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
-  // Configuration du formulaire
+  // Configuration du formulaire avec valeurs par défaut basées sur isEditing et queue
   const { 
     control, 
     handleSubmit, 
     formState: { errors },
     reset 
   } = useForm<QueueFormData>({
-    defaultValues: {
+    defaultValues: isEditing && queue ? {
+      name: queue.name,
+      queue_type: queue.queue_type,
+      status: queue.status as 'AC' | 'PA' | 'CL' | 'MA',
+      current_number: queue.current_number,
+      current_wait_time: queue.current_wait_time,
+      is_priority: queue.is_priority
+    } : {
       name: '',
       queue_type: '',
       status: 'AC',
@@ -106,15 +128,23 @@ export function CreateQueueForm({
     try {
       setIsLoading(true);
       
-      // Création de la file d'attente
-      const newQueue = await queueService.createQueue(data);
-
-      // Notifications et actions post-création
-      toast({
-        title: 'Succès',
-        description: `File d'attente "${newQueue.name}" créée`,
-        variant: 'default'
-      });
+      if (isEditing && queue) {
+        // Mise à jour d'une file existante
+        await queueService.updateQueue(queue.id, data);
+        toast({
+          title: 'Succès',
+          description: `File d'attente "${data.name}" mise à jour`,
+          variant: 'default'
+        });
+      } else {
+        // Création d'une nouvelle file
+        const newQueue = await queueService.createQueue(data);
+        toast({
+          title: 'Succès',
+          description: `File d'attente "${newQueue.name}" créée`,
+          variant: 'default'
+        });
+      }
 
       // Réinitialisation du formulaire
       reset();
@@ -125,7 +155,9 @@ export function CreateQueueForm({
       // Gestion des erreurs
       toast({
         title: 'Erreur',
-        description: 'Impossible de créer la file d\'attente',
+        description: isEditing 
+          ? 'Impossible de mettre à jour la file d\'attente'
+          : 'Impossible de créer la file d\'attente',
         variant: 'destructive'
       });
     } finally {
@@ -135,7 +167,9 @@ export function CreateQueueForm({
 
   return (
     <div className="p-6 space-y-6">
-      <h2 className="text-2xl font-semibold">Créer une Nouvelle File d'Attente</h2>
+      <h2 className="text-2xl font-semibold">
+        {isEditing ? "Modifier la File d'Attente" : "Créer une Nouvelle File d'Attente"}
+      </h2>
       
       {/* Affichage des erreurs de chargement */}
       {fetchError && (
@@ -189,33 +223,32 @@ export function CreateQueueForm({
                     field.onChange(value);
                   }
                 }}
-                      >
-              <SelectTrigger>
-                <SelectValue placeholder="Sélectionner un type de file" />
-              </SelectTrigger>
-              <SelectContent>
-                {queueTypes.length === 0 ? (
-                  <SelectItem value="default" disabled>
-                    Aucun type de file disponible
-                  </SelectItem>
-                ) : (
-                  queueTypes.map(type => (
-                    <SelectItem 
-                      key={type.id} 
-                      value={type.id}
-                    >
-                      {type.name} ({
-                        type.category === 'VE' ? 'Véhicule' : 
-                        type.category === 'PE' ? 'Personne' : 'Mixte'
-                      })
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionner un type de file" />
+                </SelectTrigger>
+                <SelectContent>
+                  {queueTypes.length === 0 ? (
+                    <SelectItem value="default" disabled>
+                      Aucun type de file disponible
                     </SelectItem>
-                  ))
-                )}
-              </SelectContent>
-            </Select>
-          )}
-        />
-          
+                  ) : (
+                    queueTypes.map(type => (
+                      <SelectItem 
+                        key={type.id} 
+                        value={type.id}
+                      >
+                        {type.name} ({
+                          type.category === 'VE' ? 'Véhicule' : 
+                          type.category === 'PE' ? 'Personne' : 'Mixte'
+                        })
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
+            )}
+          />
         </div>
 
         {/* Statut de la file d'attente */}
@@ -307,7 +340,9 @@ export function CreateQueueForm({
             type="submit" 
             disabled={isLoading}
           >
-            {isLoading ? 'Création en cours...' : 'Créer la File d\'Attente'}
+            {isLoading 
+              ? (isEditing ? 'Mise à jour en cours...' : 'Création en cours...') 
+              : (isEditing ? 'Mettre à jour' : 'Créer la File d\'Attente')}
           </Button>
         </div>
       </form>

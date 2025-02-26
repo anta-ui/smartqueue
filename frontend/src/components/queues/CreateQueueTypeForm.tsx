@@ -21,7 +21,7 @@ import { Loader2, AlertCircle } from 'lucide-react';
 import { queueTypeService, QueueTypeCategories } from '@/services/queueTypeService';
 import { userService } from '@/services/userService';
 
-export function CreateQueueTypeForm({ onSuccess, onClose }) {
+export function CreateQueueTypeForm({ initialData, isEditing = false, onSuccess, onClose }) {
   const [isLoading, setIsLoading] = useState(false);
   const [organizations, setOrganizations] = useState([]);
   const [branches, setBranches] = useState([]);
@@ -37,7 +37,7 @@ export function CreateQueueTypeForm({ onSuccess, onClose }) {
     setValue,
     watch
   } = useForm({
-    defaultValues: {
+    defaultValues: initialData || {
       name: '',
       category: QueueTypeCategories.PERSON,
       description: '',
@@ -63,6 +63,11 @@ export function CreateQueueTypeForm({ onSuccess, onClose }) {
         console.log('Organisations chargées:', orgs);
         setOrganizations(orgs);
         
+        // Si on est en mode édition, on garde les valeurs existantes
+        if (isEditing && initialData) {
+          return;
+        }
+        
         // Si une seule organisation est disponible, la sélectionner par défaut
         if (orgs && orgs.length === 1) {
           setValue('organization', orgs[0].id);
@@ -81,13 +86,20 @@ export function CreateQueueTypeForm({ onSuccess, onClose }) {
     };
 
     fetchOrganizations();
-  }, [setValue]);
+  }, [setValue, isEditing, initialData]);
 
   // Charger les branches quand l'organisation change
   useEffect(() => {
+    // Si on est en mode édition, on ne recharge pas les branches automatiquement
+    if (isEditing && initialData && initialData.branch) {
+      return;
+    }
+    
     if (!selectedOrgId) {
       setBranches([]);
-      setValue('branch', '');
+      if (!isEditing) {
+        setValue('branch', '');
+      }
       return;
     }
 
@@ -110,18 +122,20 @@ export function CreateQueueTypeForm({ onSuccess, onClose }) {
             console.log('Branches via API alternative:', branchData);
             setBranches(branchData);
             
-            if (branchData.length > 0) {
+            if (branchData.length > 0 && !isEditing) {
               setValue('branch', branchData[0].id);
             }
           } catch (branchError) {
             console.error('Erreur lors de la récupération des branches via API alternative:', branchError);
             // Dernière tentative - utiliser une branche avec ID 1
             setBranches([{ id: '1', name: 'Branche principale (ID fixe)' }]);
-            setValue('branch', '1');
+            if (!isEditing) {
+              setValue('branch', '1');
+            }
           }
         } else {
           setBranches(branchList);
-          if (branchList.length > 0) {
+          if (branchList.length > 0 && !isEditing) {
             setValue('branch', branchList[0].id);
           }
         }
@@ -129,17 +143,19 @@ export function CreateQueueTypeForm({ onSuccess, onClose }) {
         console.error('Erreur lors du chargement des branches', error);
         // Valeur de secours - utiliser ID 1 comme branche par défaut
         setBranches([{ id: '1', name: 'Branche principale (valeur par défaut)' }]);
-        setValue('branch', '1');
+        if (!isEditing) {
+          setValue('branch', '1');
+        }
       } finally {
         setIsLoadingBranches(false);
       }
     };
 
     fetchBranches();
-  }, [selectedOrgId, setValue]);
+  }, [selectedOrgId, setValue, isEditing, initialData]);
 
   // Mode de saisie manuelle
-  const [manualEntry, setManualEntry] = useState(false);
+  const [manualEntry, setManualEntry] = useState(!!initialData?.branch);
   
   // Activer la saisie manuelle des IDs
   const activateManualEntry = () => {
@@ -156,24 +172,34 @@ export function CreateQueueTypeForm({ onSuccess, onClose }) {
       setIsLoading(true);
       console.log('Données du formulaire à envoyer:', data);
       
-      // Création du type de file d'attente
-      const newQueueType = await queueTypeService.createQueueType(data);
-
-      // Notifications et actions post-création
-      toast({
-        title: 'Succès',
-        description: `Type de file d'attente "${newQueueType.name}" créé`,
-        variant: 'default'
-      });
-
-      // Réinitialisation du formulaire
-      reset();
+      let result;
+      
+      if (isEditing && initialData) {
+        // Mise à jour d'un type existant
+        result = await queueTypeService.updateQueueType(initialData.id, data);
+        toast({
+          title: 'Succès',
+          description: `Type de file d'attente "${result.name}" mis à jour`,
+          variant: 'default'
+        });
+      } else {
+        // Création d'un nouveau type
+        result = await queueTypeService.createQueueType(data);
+        toast({
+          title: 'Succès',
+          description: `Type de file d'attente "${result.name}" créé`,
+          variant: 'default'
+        });
+        reset();
+      }
 
       // Appel du callback de succès si fourni
-      onSuccess && onSuccess();
+      onSuccess && onSuccess(result);
     } catch (error) {
       // Gestion des erreurs
-      let errorMessage = 'Impossible de créer le type de file d\'attente';
+      let errorMessage = isEditing ? 
+        'Impossible de modifier le type de file d\'attente' : 
+        'Impossible de créer le type de file d\'attente';
       
       if (error.response?.data) {
         const serverErrors = error.response.data;
@@ -201,7 +227,7 @@ export function CreateQueueTypeForm({ onSuccess, onClose }) {
         variant: 'destructive'
       });
       
-      console.error('Erreur de création:', error);
+      console.error('Erreur:', error);
     } finally {
       setIsLoading(false);
     }
@@ -209,7 +235,9 @@ export function CreateQueueTypeForm({ onSuccess, onClose }) {
 
   return (
     <div className="p-6 space-y-6">
-      <h2 className="text-2xl font-semibold">Créer un Nouveau Type de File d'Attente</h2>
+      <h2 className="text-2xl font-semibold">
+        {isEditing ? 'Modifier le Type de File d\'Attente' : 'Créer un Nouveau Type de File d\'Attente'}
+      </h2>
       
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {/* Organisation */}
@@ -223,7 +251,7 @@ export function CreateQueueTypeForm({ onSuccess, onClose }) {
               <Select 
                 value={field.value} 
                 onValueChange={field.onChange}
-                disabled={isLoadingOrgs || organizations.length === 0}
+                disabled={isLoadingOrgs || organizations.length === 0 || isEditing}
               >
                 <SelectTrigger>
                   {isLoadingOrgs ? (
@@ -262,7 +290,7 @@ export function CreateQueueTypeForm({ onSuccess, onClose }) {
         <div>
           <div className="flex justify-between items-center mb-2">
             <label>Branche</label>
-            {!manualEntry && (
+            {!manualEntry && !isEditing && (
               <Button 
                 type="button" 
                 variant="ghost" 
@@ -274,7 +302,7 @@ export function CreateQueueTypeForm({ onSuccess, onClose }) {
             )}
           </div>
           
-          {manualEntry ? (
+          {manualEntry || isEditing ? (
             <Controller
               name="branch"
               control={control}
@@ -284,6 +312,7 @@ export function CreateQueueTypeForm({ onSuccess, onClose }) {
                   {...field}
                   placeholder="Saisissez l'ID de la branche (ex: 1)"
                   type="text"
+                  disabled={isEditing}
                 />
               )}
             />
@@ -332,7 +361,7 @@ export function CreateQueueTypeForm({ onSuccess, onClose }) {
           )}
           
           {/* Message d'aide */}
-          {manualEntry && (
+          {manualEntry && !isEditing && (
             <p className="text-xs text-gray-500 mt-1">
               Essayez "1" si vous ne connaissez pas l'ID exact de la branche.
             </p>
@@ -500,14 +529,14 @@ export function CreateQueueTypeForm({ onSuccess, onClose }) {
           )}
           <Button 
             type="submit" 
-            disabled={isLoading || !selectedOrgId}
+            disabled={isLoading || (!isEditing && !selectedOrgId)}
           >
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Création en cours...
+                {isEditing ? 'Mise à jour en cours...' : 'Création en cours...'}
               </>
-            ) : 'Créer le Type de File d\'Attente'}
+            ) : (isEditing ? 'Mettre à jour' : 'Créer le Type de File d\'Attente')}
           </Button>
         </div>
       </form>
