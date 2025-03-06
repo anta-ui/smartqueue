@@ -1,4 +1,3 @@
-# apps/core/views/organization_branch.py
 from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
@@ -7,8 +6,8 @@ from ..models.branch import OrganizationBranch
 from ..models.organization import Organization
 from ..serializers.organization_branch import OrganizationBranchSerializer
 from ..permissions import IsOrganizationMember
+import rest_framework.serializers as serializers
 
-# apps/core/views/organization_branch.py
 class OrganizationBranchViewSet(viewsets.ModelViewSet):
     serializer_class = OrganizationBranchSerializer
     permission_classes = [IsAuthenticated, IsOrganizationMember]
@@ -21,15 +20,18 @@ class OrganizationBranchViewSet(viewsets.ModelViewSet):
         serializer.save()
 
     def get_queryset(self):
-        org_id = self.kwargs.get('organization_id')  # Utilisez seulement 'organization_id' dans l'URL
         user = self.request.user
+        
+        # Pour les requêtes avec le paramètre 'organization'
+        organization_id = self.request.query_params.get('organization')
+        
         if user.is_superuser:
-            if org_id:
-                return OrganizationBranch.objects.filter(organization_id=org_id)
+            if organization_id:
+                return OrganizationBranch.objects.filter(organization_id=organization_id)
             return OrganizationBranch.objects.all()
+        
+        # Pour les utilisateurs non-superutilisateurs
         return OrganizationBranch.objects.filter(organization=user.organization)
-
-
 
     @action(detail=False, methods=['get'], url_path='by-organization/(?P<org_id>[^/.]+)')
     def list_by_organization(self, request, org_id=None):

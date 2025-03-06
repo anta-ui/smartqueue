@@ -1,17 +1,15 @@
-from django.db import models
-from django.utils.translation import gettext_lazy as _
-from django.contrib.gis.db import models as gis_models
-from django.contrib.gis.geos import Point
 
+from django.utils.translation import gettext_lazy as _
+from django.contrib.gis.geos import Point
+from django.contrib.gis.db import models
 class UserLocation(models.Model):
     user = models.ForeignKey(
         'core.User',
         on_delete=models.CASCADE,
         related_name='locations'
     )
-    location = gis_models.PointField(
-        help_text=_('Location coordinates (longitude, latitude)')
-    )
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
     accuracy = models.FloatField(
         help_text=_('Accuracy of the location in meters'),
         null=True,
@@ -60,8 +58,10 @@ class UserLocation(models.Model):
         return f"{self.user.email} at {self.timestamp}"
 
     def save(self, *args, **kwargs):
-        if not self.location and hasattr(self, 'latitude') and hasattr(self, 'longitude'):
-            self.location = Point(self.longitude, self.latitude)
+        if not self.latitude and not self.longitude:
+            if hasattr(self, 'latitude') and hasattr(self, 'longitude'):
+                self.latitude = self.latitude
+                self.longitude = self.longitude
         super().save(*args, **kwargs)
 
 class GeofencingZone(models.Model):
@@ -82,7 +82,7 @@ class GeofencingZone(models.Model):
         max_length=2,
         choices=ZoneType.choices
     )
-    polygon = gis_models.PolygonField(
+    polygon = models.PolygonField(
         help_text=_('Zone boundaries')
     )
     radius = models.FloatField(
@@ -125,7 +125,7 @@ class GeofencingEvent(models.Model):
         max_length=2,
         choices=EventType.choices
     )
-    location = gis_models.PointField()
+    location = Point(0, 0)
     timestamp = models.DateTimeField(auto_now_add=True)
     dwell_time = models.IntegerField(
         help_text=_('Time spent in zone in seconds'),
@@ -160,7 +160,8 @@ class LocationBasedService(models.Model):
         max_length=2,
         choices=ServiceType.choices
     )
-    location = gis_models.PointField()
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
     radius = models.FloatField(
         help_text=_('Service coverage radius in meters')
     )
@@ -204,7 +205,7 @@ class ProximityAlert(models.Model):
         max_length=2,
         choices=AlertType.choices
     )
-    target_location = gis_models.PointField()
+    target_location = Point(0, 0)
     radius = models.FloatField(
         help_text=_('Alert radius in meters')
     )

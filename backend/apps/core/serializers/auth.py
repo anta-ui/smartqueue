@@ -17,18 +17,25 @@ User = get_user_model()
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     """Sérialiseur pour l'obtention d'un token d'accès"""
     username_field = 'email'
+    
     def validate(self, attrs):
         data = super().validate(attrs)
+        
+        # Ajouter des informations sur l'utilisateur à la réponse
         data['user'] = {
             'id': self.user.id,
             'email': self.user.email,
             'first_name': self.user.first_name,
             'last_name': self.user.last_name,
             'user_type': self.user.user_type,
+            'is_superuser': self.user.is_superuser,  # Pour la vérification du super admin
+            'is_superadmin': self.user.is_superuser,  # Alias pour la compatibilité
             'organization': self.user.organization_id,
             'has_totp': TOTPDevice.objects.filter(user=self.user, confirmed=True).exists(),
-            'has_biometric': self.user.security_keys.filter(is_active=True).exists()
+            'has_biometric': self.user.security_keys.filter(is_active=True).exists(),
+            'role': 'super_admin' if self.user.is_superuser else 'admin' if self.user.user_type == User.UserType.ADMIN else 'user'
         }
+        
         return data
 
 class OrganizationSerializer(serializers.ModelSerializer):

@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.gis',  # GeoDjango
+    #'django.contrib.gis',  # GeoDjango
     
     # Third party apps
     'rest_framework',
@@ -69,6 +69,7 @@ INSTALLED_APPS = [
     'apps.geolocation.apps.GeolocationConfig',
     'apps.notifications.apps.NotificationsConfig',
     'apps.mobile.apps.MobileConfig',
+    'django_countries',
 ]
 
 MIDDLEWARE = [
@@ -80,6 +81,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'apps.core.middleware.audit.AuditMiddleware',
+    'apps.core.middleware.request_validation.InvalidPathMiddleware',
+    'apps.core.middleware.url_validation.URLValidationMiddleware',
 ]
 
 ROOT_URLCONF = 'smartqueue.urls'
@@ -106,12 +110,12 @@ WSGI_APPLICATION = 'smartqueue.wsgi.application'
 # Database
 DATABASES = {
     'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',  # GeoDjango
-        'NAME': os.getenv('DB_NAME', 'smartqueue'),
-        'USER': os.getenv('DB_USER', 'smartqueue'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'postgres'),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '5432'),
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': os.environ.get('DB_NAME', 'postgres'),
+        'USER': os.environ.get('DB_USER', 'smartqueue'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'postgres'),
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'PORT': os.environ.get('DB_PORT', '5432'),
     }
 }
 
@@ -143,21 +147,34 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',  # Autoriser l'accès sans authentification
     ),
 }
+
+# Configuration de Simple JWT
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-    'ROTATE_REFRESH_TOKENS': True,
+    'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
-    
+    'UPDATE_LAST_LOGIN': False,
+
     'ALGORITHM': 'HS256',
     'SIGNING_KEY': SECRET_KEY,
-    
+    'VERIFYING_KEY': None,
+    'AUDIENCE': None,
+    'ISSUER': None,
+
     'AUTH_HEADER_TYPES': ('Bearer',),
     'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
-    'AUTH_COOKIE': 'access_token',
-    'AUTH_COOKIE_SECURE': False,  # Mettre à True en production
-    'AUTH_COOKIE_HTTP_ONLY': True,
-    'AUTH_COOKIE_SAMESITE': 'Lax',
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+
+    'JTI_CLAIM': 'jti',
+
+    'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
+    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 
 # API Documentation
@@ -197,10 +214,9 @@ CHANNEL_LAYERS = {
     },
 }
 
-# GeoDjango settings
-GDAL_LIBRARY_PATH = '/usr/lib/libgdal.so'
-GEOS_LIBRARY_PATH = '/usr/lib/libgeos_c.so'
-
+# Utilisez les chemins complets avec les numéros de version
+GDAL_LIBRARY_PATH = '/usr/lib/x86_64-linux-gnu/libgdal.so.34'
+GEOS_LIBRARY_PATH = '/usr/lib/x86_64-linux-gnu/libgeos_c.so.1'
 # Custom user model
 AUTH_USER_MODEL = 'core.User'
 
@@ -276,22 +292,12 @@ DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', default='noreply@smartqueue
 # Frontend URL pour les liens dans les emails
 FRONTEND_URL = os.getenv('FRONTEND_URL', default='http://localhost:3000')
 import os
-GDAL_LIBRARY_PATH = '/usr/lib/x86_64-linux-gnu/libgdal.so'
-GEOS_LIBRARY_PATH = '/usr/lib/x86_64-linux-gnu/libgeos_c.so' 
+
 
 
 
 CSRF_COOKIE_SECURE = False  # Pour les tests locaux, vous pouvez laisser cette option sur False.
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'postgres',
-        'USER': 'smartqueue',
-        'PASSWORD': 'postgres',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

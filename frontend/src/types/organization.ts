@@ -71,7 +71,35 @@ export interface Organization {
     };
   };
 }
+export interface OrganizationTechnicalConfig {
+  apiKeys: ApiKey[];
+  webhooks: Webhook[];
+  limits: OrganizationLimits;
+}
 
+export interface ApiKey {
+  id: string;
+  name: string;
+  key: string;
+  permissions: string[];
+  created: string;
+  lastUsed?: string;
+}
+
+export interface Webhook {
+  id: string;
+  url: string;
+  events: string[];
+  active: boolean;
+}
+
+export interface OrganizationLimits {
+  requestsPerDay: number;
+  apiConcurrentCalls: number;
+  storage: number;
+  members: number;
+  branches: number;
+}
 export interface OrganizationListResponse {
   organizations: Organization[];
   total: number;

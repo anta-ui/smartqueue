@@ -1,36 +1,41 @@
-// src/components/organizations/list/OrganizationsList.jsx
+// src/components/superAdmin/organizations/OrganizationsList.tsx
+'use client';
+
 import React from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useOrganizations } from '@/hooks/organizations/useOrganizations';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Plus, ArrowRight, Edit } from 'lucide-react';
+import { useOrganizations } from '@/hooks/useOrganizations';
 
-const OrganizationsList = () => {
-  const { organizations, loading, error } = useOrganizations();
+export default function OrganizationsList() {
   const router = useRouter();
+  const { organizations, loading, error } = useOrganizations();
   
   console.log("OrganizationsList render:", { organizations, loading, error });
 
   const handleCreateNew = () => {
-    router.push('/dashboard/organizations/new');
+    router.push('/super-admin/organizations/new');
   };
 
-  if (loading) return (
-    <div className="flex justify-center items-center h-40">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-    </div>
-  );
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-40">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
   
-  if (error) return (
-    <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded">
-      <p>Erreur: {error}</p>
-    </div>
-  );
+  if (error) {
+    return (
+      <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded">
+        <p>Erreur: {error}</p>
+      </div>
+    );
+  }
 
-  const getStatusBadgeClass = (status) => {
+  const getStatusBadgeClass = (status: string) => {
     switch (status) {
       case 'active':
         return 'bg-green-100 text-green-800';
@@ -65,29 +70,22 @@ const OrganizationsList = () => {
                 </div>
                 
                 <div className="space-y-2 mb-4">
-                  {org.plan && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">Plan:</span>
-                      <span>{org.plan === 'free' ? 'Gratuit' : 
-                             org.plan === 'basic' ? 'Basic' : 'Premium'}</span>
-                    </div>
-                  )}
-                  {org.region && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">Région:</span>
-                      <span>{org.region === 'north' ? 'Nord' :
-                             org.region === 'south' ? 'Sud' :
-                             org.region === 'east' ? 'Est' :
-                             org.region === 'west' ? 'Ouest' : 'Centre'}</span>
-                    </div>
-                  )}
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Plan:</span>
+                    <span>{org.plan === 'free' ? 'Gratuit' : 
+                           org.plan === 'basic' ? 'Basic' : 'Premium'}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Pays:</span>
+                    <span>{org.country}</span>
+                  </div>
                 </div>
                 
                 <div className="flex gap-2">
                   <Button 
                     variant="outline" 
                     className="flex-1" 
-                    onClick={() => router.push(`/dashboard/organizations/${org.id}`)}
+                    onClick={() => router.push(`/super-admin/organizations/${org.id}`)}
                   >
                     Détails
                     <ArrowRight className="ml-2 h-4 w-4" />
@@ -96,7 +94,7 @@ const OrganizationsList = () => {
                   <Button 
                     variant="secondary" 
                     className="flex-1"
-                    onClick={() => router.push(`/dashboard/organizations/${org.id}/edit`)}
+                    onClick={() => router.push(`/super-admin/organizations/${org.id}/edit`)}
                   >
                     <Edit className="h-4 w-4 mr-2" />
                     Modifier
@@ -118,5 +116,3 @@ const OrganizationsList = () => {
     </div>
   );
 };
-
-export default OrganizationsList;

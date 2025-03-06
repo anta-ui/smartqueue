@@ -14,7 +14,8 @@ import {
 } from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
 import { useRouter } from 'next/navigation';
-
+import { CountrySelect } from '@/components/ui/country-select';
+import { getCountryDisplayName } from '@/utils/countries';
 interface EditOrganizationFormProps {
   organization: any;
   onClose: () => void;
@@ -33,7 +34,7 @@ export function EditOrganizationForm({
       name: organization.name,
       plan: organization.plan,
       status: organization.status,
-      region: organization.region
+      country: organization.contries
     }
   });
 
@@ -53,7 +54,7 @@ export function EditOrganizationForm({
       });
       
       onClose();
-      router.push('/dashboard/organizations');
+      router.push('/super-admin/organizations');
     } catch (error) {
       console.error('Erreur complète:', error);
       toast({
@@ -105,7 +106,7 @@ export function EditOrganizationForm({
                   <SelectValue placeholder="Sélectionnez un plan" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="free">Gratuit</SelectItem>
+                  
                   <SelectItem value="basic">Basic</SelectItem>
                   <SelectItem value="premium">Premium</SelectItem>
                 </SelectContent>
@@ -138,29 +139,19 @@ export function EditOrganizationForm({
         />
 
         <Controller
-          name="region"
-          control={control}
-          render={({ field }) => (
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Région</label>
-              <Select
-                value={field.value}
-                onValueChange={field.onChange}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionnez la région" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="north">Nord</SelectItem>
-                  <SelectItem value="south">Sud</SelectItem>
-                  <SelectItem value="east">Est</SelectItem>
-                  <SelectItem value="west">Ouest</SelectItem>
-                  <SelectItem value="central">Centre</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-        />
+                  name="country"
+                  control={control}
+                  render={({ field }) => (
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Pays</label>
+                      <CountrySelect 
+                        value={field.value} 
+                        onChange={field.onChange} 
+                        placeholder="Sélectionnez un pays" 
+                      />
+                    </div>
+                  )}
+          />
       </div>
 
       <div className="flex justify-end space-x-2 pt-4">

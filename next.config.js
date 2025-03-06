@@ -3,7 +3,7 @@ const nextConfig = {
   // Configuration pour Webpack
   webpack: (config) => {
     config.resolve.fallback = { fs: false, net: false, tls: false };
-    
+    config.resolve.alias['@'] = path.resolve(__dirname, './src')
     config.module.rules.push({
       test: /\.(woff|woff2|eot|ttf|otf)$/,
       use: {

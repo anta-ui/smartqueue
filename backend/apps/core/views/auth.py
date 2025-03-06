@@ -24,6 +24,7 @@ from ..serializers.auth import (
     SecurityKeySerializer,
     UserSessionSerializer,
 )
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 User = get_user_model()
 
@@ -46,18 +47,12 @@ class UserRegistrationView(APIView):
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class CustomTokenObtainPairView(APIView):
-    """Obtention d'un token d'accès"""
+class CustomTokenObtainPairView(TokenObtainPairView):
+    """Vue personnalisée pour l'obtention d'un token d'accès"""
     serializer_class = CustomTokenObtainPairSerializer
-    
 
-    def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-            return Response(serializer.validated_data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        
+# Créer un alias pour la compatibilité
+LoginView = CustomTokenObtainPairView
 
 class LogoutView(APIView):
     """Déconnexion de l'utilisateur"""
