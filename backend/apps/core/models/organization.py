@@ -1,23 +1,54 @@
+
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth import get_user_model
 
+User = get_user_model()
 
 class Organization(models.Model):
-    """Modèle pour les organisations"""
     class SubscriptionType(models.TextChoices):
         FREE = 'free', _('Free')
         BASIC = 'basic', _('Basic')
         PREMIUM = 'premium', _('Premium')
+    
+    class Status(models.TextChoices):
+        ACTIVE = 'active', _('Active')
+        INACTIVE = 'inactive', _('Inactive')
+        PENDING = 'pending', _('Pending')
+    
+    class Region(models.TextChoices):
+        NORTH = 'north', _('North')
+        SOUTH = 'south', _('South')
+        EAST = 'east', _('East')
+        WEST = 'west', _('West')
+        CENTRAL = 'central', _('Central')
 
     name = models.CharField(_('name'), max_length=255)
-    subscription_type = models.CharField(
+    plan = models.CharField(
         max_length=20,
         choices=SubscriptionType.choices,
         default=SubscriptionType.FREE
     )
-    is_active = models.BooleanField(_('active'), default=True)
+    status = models.CharField(
+        max_length=20,
+        choices=Status.choices,
+        default=Status.ACTIVE
+    )
+    region = models.CharField(
+        max_length=20,
+        choices=Region.choices,
+        default=Region.CENTRAL
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    created_by = models.ForeignKey(
+        User, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True, 
+        related_name='created_organizations'
+    )
 
     class Meta:
         app_label = 'core'
@@ -26,7 +57,6 @@ class Organization(models.Model):
 
     def __str__(self):
         return self.name
-
     def add_member(self, user, user_type):
         """Ajoute un membre à l'organisation"""
         user.organization = self
@@ -56,8 +86,38 @@ class Organization(models.Model):
         """Retourne tous les membres réguliers de l'organisation"""
         from .user import User
         return self.members.filter(user_type=User.UserType.MEMBER)
+    def has_active_resources(self):
+    # Vérifiez les relations disponibles
+        print("Relations disponibles:", dir(self))
+        
+        # Vérifiez les différentes relations possibles
+        relations_to_check = [
+            'users',
+            'user_set',
+            'organization_users',
+            'queues',
+            'tickets'
+        ]
+        
+        for relation in relations_to_check:
+            try:
+                related_objects = getattr(self, relation)
+                print(f"Vérification de {relation}: {related_objects.exists()}")
+            except AttributeError:
+                print(f"Relation {relation} non trouvée")
+        
+        return False  # Ou gérez selon votre logique métier
 
+    def can_be_deleted(self, user):
+        # Logique de suppression plus complexe
+        return (
+            user.is_superuser or  # admin peut tout supprimer
+            user.has_perm('can_delete_organization', self)  # permission spécifique
+        )
 
+class Branch(models.Model):
+    name = models.CharField(max_length=100)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
 class OrganizationSettings(models.Model):
     """Paramètres de l'organisation"""
     organization = models.OneToOneField(

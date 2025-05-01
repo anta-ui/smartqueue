@@ -1,86 +1,232 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { AlertTriangle, Activity, Server, Shield } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import dynamic from 'next/dynamic'; 
+import Link from "next/link";
+import { BuildingOffice2Icon, QueueListIcon, ChartBarIcon } from "@heroicons/react/24/outline";
+
+// Importation dynamique des composants
+const OrganizationMap = dynamic(
+  () => import('@/components/dashboard/OrganizationMap').then((mod) => mod.OrganizationMap),
+  {
+    ssr: false,
+    loading: () => <div>Chargement de la carte...</div>
+  }
+);
+
+const SystemLogs = dynamic(
+  () => import('@/components/dashboard/SystemLogs').then((mod) => mod.SystemLogs),
+  {
+    ssr: false,
+    loading: () => <div>Chargement des logs...</div>
+  }
+);
+
+// Types
+import { 
+  Metrics, 
+  SystemAlert, 
+  ServiceStatus, 
+  UsageData 
+} from '@/types/dashboard';
+
+const API_URLS = {
+  METRICS: '/api/metrics/',
+  ALERTS: '/api/alerts/',
+  SERVICE_STATUS: '/api/service/status/',
+  USAGE: '/api/usage/',
+} as const;
 
 const DashboardPage = () => {
-  const [metrics, setMetrics] = useState({
+  const [metrics, setMetrics] = useState<Metrics>({
     activeOrgs: 0,
     mrr: 0,
     systemUsage: 0,
     systemHealth: 0
   });
-
-  const [alerts, setAlerts] = useState([]);
-  const [serviceStatus, setServiceStatus] = useState({
+  
+  const [alerts, setAlerts] = useState<SystemAlert[]>([]);
+  const [serviceStatus, setServiceStatus] = useState<ServiceStatus>({
     api: 'healthy',
     websocket: 'healthy',
     thirdParty: 'degraded'
   });
+  
+  const [usageData, setUsageData] = useState<UsageData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Données simulées pour le graphique
-  const usageData = [
-    { name: 'Jan', value: 65 },
-    { name: 'Fév', value: 75 },
-    { name: 'Mar', value: 85 },
-    { name: 'Avr', value: 82 },
-    { name: 'Mai', value: 90 }
-  ];
+  const handleError = useCallback((key: string, message: string) => {
+    setErrors(prev => ({
+      ...prev,
+      [key]: message
+    }));
+  }, []);
+
+  const clearError = useCallback((key: string) => {
+    setErrors(prev => {
+      const newErrors = { ...prev };
+      delete newErrors[key];
+      return newErrors;
+    });
+  }, []);
+
+  const fetchWithErrorHandling = useCallback(async (url: string, key: string) => {
+    try {
+      clearError(key);
+      
+      const response = await fetch(url, {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        const errorMessage = response.status === 404 ? `L'endpoint ${url} n'existe pas` :
+                           response.status === 401 ? 'Session expirée' :
+                           `Erreur serveur: ${response.status}`;
+        handleError(key, errorMessage);
+        return null;
+      }
+
+      const contentType = response.headers.get('content-type');
+      if (!contentType?.includes('application/json')) {
+        handleError(key, 'Format de réponse invalide');
+        return null;
+      }
+
+      return await response.json();
+    } catch (error) {
+      handleError(key, 'Erreur de connexion');
+      return null;
+    }
+  }, [handleError, clearError]);
+
+  const loadDashboardData = useCallback(async () => {
+    setLoading(true);
+    setErrors({});
+
+    const [metricsData, alertsData, statusData, usageData] = await Promise.all([
+      fetchWithErrorHandling(API_URLS.METRICS, 'metrics'),
+      fetchWithErrorHandling(API_URLS.ALERTS, 'alerts'),
+      fetchWithErrorHandling(API_URLS.SERVICE_STATUS, 'status'),
+      fetchWithErrorHandling(API_URLS.USAGE, 'usage')
+    ]);
+
+    if (metricsData) setMetrics(metricsData);
+    setAlerts(Array.isArray(alertsData) ? alertsData : []);
+    if (statusData) setServiceStatus(statusData);
+    setUsageData(Array.isArray(usageData) ? usageData : []);
+
+    setLoading(false);
+  }, [fetchWithErrorHandling]);
+
+  useEffect(() => {
+    loadDashboardData();
+    const interval = setInterval(loadDashboardData, 5 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [loadDashboardData]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Chargement...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 space-y-6">
       {/* En-tête du tableau de bord */}
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Tableau de Bord</h1>
-        <Button variant="outline">
+        <Button 
+          variant="outline" 
+          onClick={loadDashboardData}
+          className="flex items-center gap-2"
+        >
           Rafraîchir
         </Button>
       </div>
 
-      {/* KPIs principaux */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <h3 className="text-sm font-medium">Organisations Actives</h3>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{metrics.activeOrgs}</div>
-          </CardContent>
-        </Card>
+      {/* Messages d'erreur */}
+      {Object.entries(errors).length > 0 && (
+        <div className="space-y-2">
+          {Object.entries(errors).map(([key, message]) => (
+            <Alert key={key} variant="destructive">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription>{message}</AlertDescription>
+            </Alert>
+          ))}
+        </div>
+      )}
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <h3 className="text-sm font-medium">MRR</h3>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{metrics.mrr}€</div>
-          </CardContent>
-        </Card>
+      {/* Navigation rapide */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <Link href="/dashboard/organizations">
+          <div className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow cursor-pointer">
+            <div className="p-6">
+              <div className="flex items-center text-lg font-semibold mb-2">
+                <BuildingOffice2Icon className="h-6 w-6 mr-2" />
+                Organisations
+              </div>
+              <p className="text-gray-600">Gérer vos organisations</p>
+            </div>
+          </div>
+        </Link>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <h3 className="text-sm font-medium">Utilisation Système</h3>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{metrics.systemUsage}%</div>
-          </CardContent>
-        </Card>
+        <Link href="/dashboard/queues">
+          <div className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow cursor-pointer">
+            <div className="p-6">
+              <div className="flex items-center text-lg font-semibold mb-2">
+                <QueueListIcon className="h-6 w-6 mr-2" />
+                Files d'attente
+              </div>
+              <p className="text-gray-600">Gérer vos files d'attente</p>
+            </div>
+          </div>
+        </Link>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <h3 className="text-sm font-medium">Santé Système</h3>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{metrics.systemHealth}%</div>
-          </CardContent>
-        </Card>
+        <Link href="/dashboard/analytics">
+          <div className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow cursor-pointer">
+            <div className="p-6">
+              <div className="flex items-center text-lg font-semibold mb-2">
+                <ChartBarIcon className="h-6 w-6 mr-2" />
+                Analytiques
+              </div>
+              <p className="text-gray-600">Voir vos statistiques</p>
+            </div>
+          </div>
+        </Link>
       </div>
 
-      {/* Graphique de tendances */}
+      {/* Métriques */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { title: "Organisations Actives", value: metrics.activeOrgs },
+          { title: "MRR", value: `${metrics.mrr}€` },
+          { title: "Utilisation Système", value: `${metrics.systemUsage}%` },
+          { title: "Santé Système", value: `${metrics.systemHealth}%` }
+        ].map((metric, index) => (
+          <Card key={`metric-${index}`}>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <h3 className="text-sm font-medium">{metric.title}</h3>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{metric.value}</div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Graphique d'utilisation */}
       <Card className="p-4">
         <CardHeader>
           <h3 className="text-lg font-medium">Tendances d'Utilisation</h3>
@@ -89,7 +235,7 @@ const DashboardPage = () => {
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={usageData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
+              <XAxis dataKey="date" />
               <YAxis />
               <Tooltip />
               <Line type="monotone" dataKey="value" stroke="#2563eb" />
@@ -98,7 +244,7 @@ const DashboardPage = () => {
         </CardContent>
       </Card>
 
-      {/* État des services */}
+      {/* État des services et alertes */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card>
           <CardHeader>
@@ -106,53 +252,62 @@ const DashboardPage = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <Server className="h-4 w-4" />
-                  <span>API</span>
+              {[
+                { name: 'API', status: serviceStatus.api, Icon: Server },
+                { name: 'WebSocket', status: serviceStatus.websocket, Icon: Activity },
+                { name: 'Services Tiers', status: serviceStatus.thirdParty, Icon: Shield }
+              ].map((service, index) => (
+                <div key={`service-${index}`} className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <service.Icon className="h-4 w-4" />
+                    <span>{service.name}</span>
+                  </div>
+                  <span className={
+                    service.status === 'healthy' ? 'text-green-500' :
+                    service.status === 'degraded' ? 'text-yellow-500' : 'text-red-500'
+                  }>
+                    {service.status === 'healthy' ? 'Opérationnel' :
+                     service.status === 'degraded' ? 'Dégradé' : 'Hors service'}
+                  </span>
                 </div>
-                <span className="text-green-500">Opérationnel</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <Activity className="h-4 w-4" />
-                  <span>WebSocket</span>
-                </div>
-                <span className="text-green-500">Opérationnel</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <Shield className="h-4 w-4" />
-                  <span>Services Tiers</span>
-                </div>
-                <span className="text-yellow-500">Dégradé</span>
-              </div>
+              ))}
             </div>
           </CardContent>
         </Card>
 
-        {/* Alertes Système */}
         <Card>
           <CardHeader>
             <h3 className="text-lg font-medium">Alertes Système</h3>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <Alert>
-                <AlertTriangle className="h-4 w-4" />
-                <AlertDescription>
-                  Charge CPU élevée sur le serveur principal
-                </AlertDescription>
-              </Alert>
-              <Alert>
-                <AlertTriangle className="h-4 w-4" />
-                <AlertDescription>
-                  Latence réseau détectée dans la région EU-West
-                </AlertDescription>
-              </Alert>
+              {alerts.length === 0 ? (
+                <p className="text-gray-500 text-center">Aucune alerte active</p>
+              ) : (
+                alerts.map(alert => (
+                  <Alert 
+                    key={alert.id}
+                    variant={alert.severity === 'error' ? 'destructive' : 'default'}
+                  >
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertDescription>
+                      {alert.message}
+                      <div className="text-xs text-gray-500 mt-1">
+                        {new Date(alert.timestamp).toLocaleString()}
+                      </div>
+                    </AlertDescription>
+                  </Alert>
+                ))
+              )}
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Carte et logs */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <OrganizationMap />
+        <SystemLogs />
       </div>
     </div>
   );

@@ -34,7 +34,7 @@ class QueueTypeViewSet(viewsets.ModelViewSet):
 
 class QueueViewSet(viewsets.ModelViewSet):
     serializer_class = QueueSerializer
-    permission_classes = [IsAuthenticated, IsOrganizationMember]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Queue.objects.filter(

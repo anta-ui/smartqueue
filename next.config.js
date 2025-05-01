@@ -2,6 +2,8 @@
 const nextConfig = {
   // Configuration pour Webpack
   webpack: (config) => {
+    config.resolve.fallback = { fs: false, net: false, tls: false };
+    
     config.module.rules.push({
       test: /\.(woff|woff2|eot|ttf|otf)$/,
       use: {
@@ -16,7 +18,9 @@ const nextConfig = {
       }
     });
     return config;
+    
   },
+  transpilePackages: ['leaflet', 'react-leaflet'],
 
   // Configuration pour Turbopack
   experimental: {

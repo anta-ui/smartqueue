@@ -1,177 +1,374 @@
+// src/app/dashboard/queues/page.tsx
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import Link from 'next/link';
 import { queueService } from '@/services/queueService';
-import { Card, CardHeader, CardContent } from '@/components/common/Card';
-import { Button } from '@/components/common/Button';
-import { Modal } from '@/components/common/Modal';
-import { QueueDetailView } from '@/components/queues/QueueDetailView';
-import type { Queue, QueueStatus } from '@/types/queue';
+import { CreateQueueForm } from '@/components/queues/CreateQueueForm';
+import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardContent } from '@/components/ui/card';
+import { Modal } from '@/components/ui/modal';
+import { Badge } from '@/components/ui/badge';
+import { 
+  Table, 
+  TableHeader, 
+  TableBody, 
+  TableRow, 
+  TableHead, 
+  TableCell 
+} from '@/components/ui/table';
+import { 
+  Tabs, 
+  TabsList, 
+  TabsTrigger, 
+  TabsContent 
+} from '@/components/ui/tabs';
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Icons } from '@/components/ui/icons';
+// Importer directement les icônes manquantes de Lucide
+import { Cog, AlertTriangle, Plus } from 'lucide-react';
+import { toast } from '@/components/ui/use-toast';
+
+// Types
+type QueueStatus = 'ACTIVE' | 'PAUSED' | 'CLOSED';
+
+interface Queue {
+  id: string;
+  name: string;
+  status: QueueStatus;
+  current_number: number;
+  current_wait_time: number;
+  queue_type: string;
+}
+
+interface QueueType {
+  id: string;
+  name: string;
+  category: 'VE' | 'PE' | 'MI';
+}
 
 export default function QueuesPage() {
+  // États
   const [queues, setQueues] = useState<Queue[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [selectedQueue, setSelectedQueue] = useState<Queue | null>(null);
-  const [mounted, setMounted] = useState(false);
+  const [queueTypes, setQueueTypes] = useState<QueueType[]>([]);
+  const [filteredQueues, setFilteredQueues] = useState<Queue[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  // États de l'interface
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<QueueStatus | 'ALL'>('ALL');
+  const [searchTerm, setSearchTerm] = useState('');
 
+  // Chargement initial des files d'attente et types de files
   useEffect(() => {
-    setMounted(true);
+    loadQueues();
+    loadQueueTypes();
   }, []);
 
+  // Filtrage des files d'attente
   useEffect(() => {
-    if (mounted) {
-      loadQueues();
-    }
-  }, [mounted]);
+    let result = queues;
 
+    // Filtrage par statut
+    if (statusFilter !== 'ALL') {
+      result = result.filter(queue => queue.status === statusFilter);
+    }
+
+    // Filtrage par recherche
+    if (searchTerm) {
+      result = result.filter(queue => 
+        queue.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    setFilteredQueues(result);
+  }, [queues, statusFilter, searchTerm]);
+
+  // Charger les files d'attente
   const loadQueues = async () => {
     try {
       setLoading(true);
-      setError('');
-      const data = await queueService.getQueues();
-      if (Array.isArray(data)) {
-        setQueues(data);
-      } else {
-        setError('Format de données invalide');
+      const response = await queueService.getQueues();
+      console.log('Réponse API complète:', response);
+      
+      let queuesData = [];
+      if (Array.isArray(response)) {
+        queuesData = response;
+      } else if (typeof response === 'object' && response !== null) {
+        // Si la réponse est un objet, essayez de trouver un tableau à l'intérieur
+        const possibleArrays = Object.values(response).filter(Array.isArray);
+        if (possibleArrays.length > 0) {
+          queuesData = possibleArrays[0];
+        }
+      }
+      
+      console.log('Données des files d\'attente:', queuesData);
+      setQueues(queuesData);
+      
+      if (queuesData.length === 0) {
+        console.warn('Aucune file d\'attente trouvée');
       }
     } catch (err) {
-      console.error('Error loading queues:', err);
-      setError('Échec du chargement des files d\'attente');
+      setError('Impossible de charger les files d\'attente');
+      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleStatusChange = async (queueId: string, status: QueueStatus) => {
+  // Charger les types de files d'attente
+  const loadQueueTypes = async () => {
     try {
-      await queueService.updateQueueStatus(queueId, status);
-      loadQueues();
+      const types = await queueService.getQueueTypes();
+      console.log("Types de files reçus:", types);
+      setQueueTypes(types);
     } catch (err) {
-      setError('Échec de la mise à jour du statut');
+      console.error("Erreur lors du chargement des types de files d'attente", err);
     }
   };
 
-  if (!mounted) {
-    return null;
-  }
+  // Supprimer une file d'attente
+  const handleDeleteQueue = async (id: string) => {
+    try {
+      await queueService.deleteQueue(id);
+      setQueues(queues.filter(q => q.id !== id));
+      toast({
+        title: 'Succès',
+        description: 'File d\'attente supprimée',
+      });
+    } catch (err) {
+      toast({
+        title: 'Erreur',
+        description: 'Impossible de supprimer la file d\'attente',
+        variant: 'destructive'
+      });
+    }
+  };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen p-4">
-        <div className="text-lg">Chargement...</div>
-      </div>
-    );
-  }
+  // Mettre à jour le statut
+  const handleStatusChange = async (id: string, newStatus: QueueStatus) => {
+    try {
+      await queueService.updateQueueStatus(id, newStatus);
+      setQueues(queues.map(q => 
+        q.id === id ? { ...q, status: newStatus } : q
+      ));
+      toast({
+        title: 'Succès',
+        description: 'Statut de la file d\'attente mis à jour',
+      });
+    } catch (err) {
+      toast({
+        title: 'Erreur',
+        description: 'Impossible de mettre à jour le statut',
+        variant: 'destructive'
+      });
+    }
+  };
 
-  if (error) {
-    return (
-      <div className="p-4">
-        <div className="bg-red-50 p-4 rounded-md">
-          <p className="text-red-700">{error}</p>
-          <Button onClick={loadQueues} className="mt-4">
-            Réessayer
+  // Statistiques
+  const queueStats = useMemo(() => {
+    if (!Array.isArray(queues)) {
+      return {
+        total: 0,
+        active: 0,
+        paused: 0,
+        closed: 0,
+      };
+    }
+    return {
+      total: queues.length,
+      active: queues.filter(q => q.status === 'ACTIVE').length,
+      paused: queues.filter(q => q.status === 'PAUSED').length,
+      closed: queues.filter(q => q.status === 'CLOSED').length,
+    };
+  }, [queues]);
+
+  // Rendu du composant
+  return (
+    <div className="p-6 space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold">Gestion des Files d'Attente</h1>
+        <div className="flex space-x-4">
+          <Link href="/dashboard/queue-types">
+            <Button variant="outline">
+              <Cog className="mr-2" />
+              Gérer les Types de Files
+            </Button>
+          </Link>
+          <Button onClick={() => setIsCreateModalOpen(true)}>
+            <Plus className="mr-2" />
+            Nouvelle File d'Attente
           </Button>
         </div>
       </div>
-    );
-  }
 
-  return (
-    <div className="p-4">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">
-          Gestion des Files d'Attente
-        </h1>
-        <Button onClick={() => setSelectedQueue({} as Queue)}>
-          Nouvelle File d'Attente
-        </Button>
+      {/* Alerte si aucun type de file n'est configuré */}
+      {queueTypes.length === 0 && (
+        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <AlertTriangle className="h-5 w-5 text-yellow-400" />
+            </div>
+            <div className="ml-3">
+              <p className="text-sm text-yellow-700">
+                Aucun type de file d'attente n'est configuré. 
+                <Link href="/dashboard/queue-types" className="font-medium underline text-yellow-700 hover:text-yellow-600 ml-1">
+                  Créez un type de file
+                </Link> pour pouvoir créer des files d'attente.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Statistiques rapides */}
+      <div className="grid grid-cols-4 gap-4">
+        {[
+          { label: 'Total', value: queueStats.total, color: 'bg-blue-100 text-blue-800' },
+          { label: 'Actives', value: queueStats.active, color: 'bg-green-100 text-green-800' },
+          { label: 'En Pause', value: queueStats.paused, color: 'bg-yellow-100 text-yellow-800' },
+          { label: 'Fermées', value: queueStats.closed, color: 'bg-red-100 text-red-800' }
+        ].map(stat => (
+          <Card key={stat.label}>
+            <CardContent className="flex items-center justify-between p-4">
+              <div>
+                <p className="text-sm text-gray-500">{stat.label}</p>
+                <p className="text-2xl font-bold">{stat.value}</p>
+              </div>
+              <Badge className={stat.color}>{stat.value}</Badge>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
-      {queues.length === 0 ? (
-        <div className="text-center py-8">
-          <p className="text-gray-500">Aucune file d'attente disponible</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {queues.map((queue) => (
-            <Card
-              key={queue.id}
-              onClick={() => setSelectedQueue(queue)}
-              className="cursor-pointer hover:shadow-lg transition-shadow"
-            >
-              <CardHeader>
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-medium">{queue.name}</h3>
-                  <span className={`px-2 py-1 text-sm rounded-full ${
-                    queue.status === 'AC' ? 'bg-green-100 text-green-800' :
-                    queue.status === 'PA' ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-red-100 text-red-800'
-                  }`}>
-                    {queue.status === 'AC' ? 'Actif' :
-                     queue.status === 'PA' ? 'En pause' :
-                     'Fermé'}
-                  </span>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-500">Numéro Actuel</span>
-                    <span className="text-xl font-semibold">
-                      {queue.current_number}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-500">Temps d'Attente</span>
-                    <span>{queue.current_wait_time} min</span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 mt-4">
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleStatusChange(queue.id.toString(), 'PA');
-                      }}
-                      disabled={queue.status === 'PA'}
-                    >
-                      Pause
-                    </Button>
-                    <Button
-                      variant={queue.status === 'AC' ? 'danger' : 'primary'}
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleStatusChange(
-                          queue.id.toString(),
-                          queue.status === 'AC' ? 'CL' : 'AC'
-                        );
-                      }}
-                    >
-                      {queue.status === 'AC' ? 'Fermer' : 'Activer'}
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-
-      {selectedQueue && (
-        <Modal
-          isOpen={!!selectedQueue}
-          onClose={() => setSelectedQueue(null)}
-          className="max-w-4xl"
+      {/* Filtres et recherche */}
+      <div className="flex space-x-4">
+        <Select 
+          value={statusFilter} 
+          onValueChange={(value) => setStatusFilter(value as QueueStatus | 'ALL')}
         >
-          <QueueDetailView
-            queue={selectedQueue}
-            onStatusChange={(status) => handleStatusChange(selectedQueue.id.toString(), status)}
-            onClose={() => setSelectedQueue(null)}
-          />
-        </Modal>
-      )}
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Filtrer par statut" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="ALL">Tous les statuts</SelectItem>
+            <SelectItem value="ACTIVE">Actif</SelectItem>
+            <SelectItem value="PAUSED">En Pause</SelectItem>
+            <SelectItem value="CLOSED">Fermé</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Input 
+          placeholder="Rechercher une file d'attente" 
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="flex-grow"
+        />
+      </div>
+
+      {/* Liste des files d'attente */}
+      <Card>
+        <CardContent className="p-0">
+          {loading ? (
+            <div className="p-6 text-center">Chargement...</div>
+          ) : error ? (
+            <div className="p-6 text-center text-red-500">{error}</div>
+          ) : filteredQueues.length === 0 ? (
+            <div className="p-6 text-center">
+              Aucune file d'attente trouvée.
+              {queueTypes.length > 0 ? (
+                <span> Créez-en une pour commencer.</span>
+              ) : (
+                <span> Commencez par <Link href="/dashboard/queue-types" className="underline">créer un type de file d'attente</Link>.</span>
+              )}
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nom</TableHead>
+                  <TableHead>Statut</TableHead>
+                  <TableHead>Numéro Actuel</TableHead>
+                  <TableHead>Temps d'Attente</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredQueues.map(queue => (
+                  <TableRow key={queue.id}>
+                    <TableCell>{queue.name}</TableCell>
+                    <TableCell>
+                      <Badge 
+                        variant={
+                          queue.status === 'ACTIVE' ? 'success' :
+                          queue.status === 'PAUSED' ? 'warning' : 'destructive'
+                        }
+                      >
+                        {queue.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{queue.current_number}</TableCell>
+                    <TableCell>{queue.current_wait_time} min</TableCell>
+                    <TableCell>
+                      <div className="flex space-x-2">
+                        <Button 
+                          size="sm" 
+                          variant="secondary"
+                          onClick={() => {
+                            // Logique de modification
+                          }}
+                        >
+                          Modifier
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => handleStatusChange(
+                            queue.id, 
+                            queue.status === 'ACTIVE' ? 'PAUSED' : 
+                            queue.status === 'PAUSED' ? 'CLOSED' : 'ACTIVE'
+                          )}
+                        >
+                          {queue.status === 'ACTIVE' ? 'Mettre en Pause' : 
+                            queue.status === 'PAUSED' ? 'Fermer' : 'Activer'}
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="destructive"
+                          onClick={() => handleDeleteQueue(queue.id)}
+                        >
+                          Supprimer
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Modal de création */}
+      <Modal 
+        isOpen={isCreateModalOpen} 
+        onClose={() => setIsCreateModalOpen(false)}
+      >
+        <CreateQueueForm 
+          onSuccess={() => {
+            setIsCreateModalOpen(false);
+            loadQueues();
+          }}
+        />
+      </Modal>
     </div>
   );
 }

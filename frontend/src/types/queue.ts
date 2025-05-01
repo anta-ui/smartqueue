@@ -1,12 +1,12 @@
+
+export type QueueStatus = 'ACTIVE' | 'PAUSED' | 'CLOSED'| "MAINTENANCE";
 export interface Queue {
   id: string;
   name: string;
-  status: "ACTIVE" | "PAUSED" | "CLOSED" | "MAINTENANCE";
-  currentNumber: number;
-  currentWaitTime: number;
-  isPriority: boolean;
-  createdAt: string;
-  updatedAt: string;
+  status: QueueStatus;
+  current_number: number;
+  current_wait_time: number;
+  queue_type: string;
 }
 
 export interface QueueType {
@@ -43,4 +43,20 @@ export interface ServicePoint {
   status: "AVAILABLE" | "BUSY" | "OFFLINE" | "BREAK";
   currentTicket?: Ticket;
   isVehicleCompatible: boolean;
+}
+
+
+export interface QueueCreateUpdateData {
+  name: string;
+  queue_type: string;
+  status?: QueueStatus;
+  current_number?: number;
+  current_wait_time?: number;
+}
+export interface QueueType {
+  id: string;
+  name: string;
+  category: 'VEHICLE' | 'PERSON' | 'MIXED';
+  estimated_service_time: number;
+  max_capacity: number;
 }

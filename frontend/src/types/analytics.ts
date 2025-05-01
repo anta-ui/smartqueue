@@ -1,54 +1,113 @@
-// types/analytics.ts
-export interface QueueMetrics {
+// services/analytics.service.ts
+import { api } from '@/services/api';
+import Cookies from 'js-cookie';
+interface QueueMetric {
+  id: number;
+  date: string;
+  total_tickets: number;
+  served_tickets: number;
+  cancelled_tickets: number;
+  no_shows: number;
+  average_wait_time: number;
+  average_service_time: number;
+  peak_hours: { [hour: string]: number };
+  satisfaction_score: number;
+}
+
+interface AgentMetric {
+  id: number;
+  agent: {
     id: number;
-    queue: number;
-    queue_name: string;
-    date: string;
-    average_wait_time: string;
-    total_customers: number;
-    served_customers: number;
-    abandoned_customers: number;
-    peak_hours: string[];
-    service_efficiency: number;
-    service_efficiency_percentage: number;
-    created_at: string;
+    name: string;
+    email: string;
+  };
+  customers_served: number;
+  average_service_time: number;
+  service_rating: number;
+}
+
+interface FeedbackSummary {
+    total_feedback: number;
+    average_rating: number | null;
+    average_wait_time_satisfaction: number | null;
+    average_service_satisfaction: number | null;
+    rating_distribution: Array<{
+      rating: number;
+      count: number;
+    }>;
   }
+
+
+
+const getAuthHeaders = () => {
+  const token = Cookies.get('access_token') || localStorage.getItem('access_token');
+  return {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  };
+};
+
+export const analyticsService = {
+    getQueueMetrics: async () => {
+      try {
+        const response = await api.get('/analytics/queue-metrics/', {
+          headers: {
+            'Authorization': `Bearer ${getToken()}`
+          }
+        });
+        return response.data;
+      } catch (error: any) {
+        if (error.response?.status === 401) {
+          window.location.href = '/login';
+        }
+        console.error('Erreur lors de la récupération des métriques de la file d\'attente :', error);
+        return [];
+      }
+    },
   
-  export interface AgentPerformance {
-    id: number;
-    agent: number;
-    agent_name: string;
-    agent_email: string;
-    date: string;
-    customers_served: number;
-    average_service_time: string;
-    service_rating: number | null;
-    created_at: string;
-  }
+    getAgentPerformance: async () => {
+      try {
+        const response = await api.get('/analytics/agent-performance/', {
+          headers: {
+            'Authorization': `Bearer ${getToken()}`
+          }
+        });
+        return response.data;
+      } catch (error: any) {
+        if (error.response?.status === 401) {
+          window.location.href = '/login';
+        }
+        console.error('Erreur lors de la récupération des performances des agents :', error);
+        return [];
+      }
+    },
   
-  export interface CustomerFeedback {
-    id: number;
-    ticket: number;
-    ticket_number: string;
-    rating: 1 | 2 | 3 | 4 | 5;
-    comment: string;
-    wait_time_satisfaction: 1 | 2 | 3 | 4 | 5;
-    service_satisfaction: 1 | 2 | 3 | 4 | 5;
-    average_rating: number;
-    created_at: string;
-  }
+    getFeedbackSummary: async () => {
+      try {
+        const response = await api.get('/analytics/customer-feedback/summary/', {
+          headers: {
+            'Authorization': `Bearer ${getToken()}`
+          }
+        });
+        return response.data;
+      } catch (error: any) {
+        if (error.response?.status === 401) {
+          window.location.href = '/login';
+        }
+        console.error('Erreur lors de la récupération du résumé des retours :', error);
+        return {
+          total_feedback: 0,
+          average_rating: 0,
+          average_wait_time_satisfaction: 0,
+          average_service_satisfaction: 0,
+          rating_distribution: []
+        };
+      }
+    }
+  };
   
-  export interface MetricsAggregate {
-    date_from: string;
-    date_to: string;
-    aggregate_by: 'day' | 'week' | 'month';
-  }
-  
-  export interface PerformanceAggregate extends MetricsAggregate {
-    metrics: ('customers_served' | 'average_service_time' | 'service_rating')[];
-  }
-  
-  export interface FeedbackAnalysis extends MetricsAggregate {
-    group_by: 'rating' | 'wait_time_satisfaction' | 'service_satisfaction';
-    include_comments: boolean;
+  // Fonction utilitaire pour récupérer le token
+  function getToken() {
+    return Cookies.get('access_token') || localStorage.getItem('access_token');
   }

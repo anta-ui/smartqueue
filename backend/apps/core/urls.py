@@ -11,26 +11,31 @@ from .views.auth import (
     SecurityKeyViewSet,
     LogoutView
 )
-from .views.organization import (
-    OrganizationMemberListView,
-    OrganizationAddMemberView,
-    OrganizationRemoveMemberView
+from .views.dashboard import (
+    ServiceStatusView,
+    MetricsView,
+    UsageView
+)
+from .views import (
+    DashboardStatsView,
+    OrganizationLocationsView,
+    AlertsView
 )
 from .views.consent import (
     UserConsentCreateView,
     UserConsentBulkUpdateView,
     UserConsentListView
 )
-from .views import (
-    DashboardStatsView, 
-    OrganizationLocationsView, 
-    AlertsView
-    
-)
-app_name = 'core'
+from apps.core.views.organization import OrganizationViewSet
+from apps.core.views.organization_branch import OrganizationBranchViewSet
 
+
+app_name = 'core'
 router = DefaultRouter()
 router.register(r'security-keys', SecurityKeyViewSet, basename='security_key')
+router.register(r'organizations', OrganizationViewSet, basename='organizations')
+router.register(r'organization-branches', OrganizationBranchViewSet, basename='organizationbranch')
+
 
 urlpatterns = [
     # Authentication
@@ -51,20 +56,19 @@ urlpatterns = [
     path('auth/biometric/register/', BiometricRegistrationView.as_view(), name='biometric_register'),
     path('auth/biometric/verify/', BiometricVerificationView.as_view(), name='biometric_verify'),
     
-    # Organization
-    path('organization/members/', OrganizationMemberListView.as_view(), name='organization-members'),
-    path('organization/members/add/', OrganizationAddMemberView.as_view(), name='organization-add-member'),
-    path('organization/members/remove/', OrganizationRemoveMemberView.as_view(), name='organization-remove-member'),
-    
     # Consent
     path('consent/', UserConsentListView.as_view(), name='consent-list'),
     path('consent/create/', UserConsentCreateView.as_view(), name='consent-create'),
     path('consent/bulk-update/', UserConsentBulkUpdateView.as_view(), name='consent-bulk-update'),
     
-    # Dashboard
-    path('dashboard/stats/', DashboardStatsView.as_view(), name='dashboard-stats'),
+    # Dashboard et API
     path('dashboard/organization-locations/', OrganizationLocationsView.as_view(), name='organization-locations'),
-    path('dashboard/alerts/', AlertsView.as_view(), name='dashboard-alerts'),
+    path('dashboard/stats/', DashboardStatsView.as_view(), name='dashboard-stats'),
+    path('dashboard/alerts', AlertsView.as_view(), name='dashboard-alerts'),
+    path('dashboard/services/status', ServiceStatusView.as_view(), name='services-status'),
+    path('dashboard/usage-trends', UsageView.as_view(), name='usage-trends'),
+    
     # API Router
     path('', include(router.urls)),
 ]
+print("Routes disponibles:", [str(url) for url in router.urls])

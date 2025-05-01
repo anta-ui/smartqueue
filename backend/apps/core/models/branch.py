@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
+from .organization import Organization
 
 class OrganizationBranch(models.Model):
     """Succursale d'une organisation"""

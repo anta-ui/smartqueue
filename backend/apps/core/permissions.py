@@ -5,6 +5,7 @@ class IsOrganizationMember(permissions.BasePermission):
     message = _('You must be a member of the organization.')
 
     def has_permission(self, request, view):
+        
         return bool(request.user and request.user.is_authenticated and request.user.organization)
 
     def has_object_permission(self, request, view, obj):
@@ -51,3 +52,11 @@ class HasBiometricEnabled(permissions.BasePermission):
             request.user.is_authenticated and 
             request.user.security_keys.filter(is_active=True).exists()
         )
+# Dans vos réglages de permissions
+PERMISSIONS = {
+    'can_delete_organization': [
+        'is_superuser',
+        'is_staff',
+        # Autres conditions spécifiques
+    ]
+}

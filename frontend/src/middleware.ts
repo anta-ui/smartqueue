@@ -18,16 +18,15 @@ export function middleware(request: NextRequest) {
 
   // Rediriger vers la page de login si non authentifié
   if (!token && isDashboardRoute) {
-    const redirectUrl = new URL('/(auth)/login', request.url);
+    const redirectUrl = new URL('/login', request.url);
     return NextResponse.redirect(redirectUrl);
   }
-
-  // Rediriger vers le dashboard si déjà authentifié
-  if (token && isPublicRoute) {
-    const redirectUrl = new URL('/dashboard', request.url);
-    return NextResponse.redirect(redirectUrl);
+  // Si pas de token, rediriger vers la page de connexion
+  if (!token && !request.nextUrl.pathname.startsWith('/login')) {
+    return NextResponse.redirect(new URL('/login', request.url))
   }
 
+  
   return NextResponse.next();
 }
 
